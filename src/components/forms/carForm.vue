@@ -1,11 +1,12 @@
 <template>
   <div id="app">
-    <RecipeForm />
+    <MyCarForm />
   </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
+import MyCarForm from '../MyCarForm.vue';
 import SimpleCard from './simpleCard.vue';
 import RecipeForm from '../RecipeForm.vue';
 
@@ -13,6 +14,7 @@ import RecipeForm from '../RecipeForm.vue';
   components: {
     SimpleCard,
     RecipeForm,
+    MyCarForm,
   },
 })
 
