@@ -15,15 +15,46 @@
         </label>
       </Field> -->
 
+      <!-- License plate -->
       <TextInput
         fieldName="license"
         fieldTitle="License plate"
         :rules="'required|minLength:6'"
-        @on-input="getInputValue"
         @on-fetch="searchCar"
       />
 
-      <button class="submit-button">Ok</button>
+      <!-- Postcode -->
+      <BaseInput
+        fieldName="zipcode"
+        :fieldTitle="'Zipcode'"
+        :rules="'required|length:6|postcode'"
+        :maxlength="6"
+        :placeholder="'Enter your postcode'"
+        @on-fetch="searchCar"
+      />
+
+      <!-- House number -->
+      <BaseInput
+        fieldName="houseNumber"
+        :fieldTitle="'House number'"
+        :rules="'required|numeric'"
+        :maxlength="4"
+        :type="'number'"
+        :placeholder="'Enter your house number'"
+        @on-fetch="searchCar"
+      />
+
+      <!-- House number addition -->
+      <BaseInput
+        fieldName="houseNumber"
+        :fieldTitle="'House number addition'"
+        :maxlength="2"
+        :type="'number'"
+        :placeholder="'Enter your house number addition'"
+        @on-fetch="searchCar"
+      />
+
+      <button class="submit-button" type="submit">Ok</button>
     </Form>
 
     <div>
@@ -39,18 +70,24 @@
 </template>
 
 <script lang="ts">
-import { Form, Field, defineRule } from 'vee-validate';
-import { required, length, min } from '@vee-validate/rules';
-import { Options, Vue, setup } from 'vue-class-component';
+/** Vue */
 import { ref } from 'vue';
+import { Options, Vue, setup } from 'vue-class-component';
+/** Validation */
+import { Form, Field, defineRule } from 'vee-validate';
+import { required, length, numeric } from '@vee-validate/rules';
+/** Components */
 import TextInput from './formElements/TextInput.vue';
+import BaseInput from './formElements/BaseInput.vue';
+/** Interface and Modals */
 import { VehicleNL } from '../interfaces/Vehicle';
 import AllVehicleData from '../models/for_API_Response/AllVehicleData';
+/** API */
 import fetchVehicle from '../api/externalAPI';
 
 defineRule('required', required);
 defineRule('length', length);
-defineRule('min', min);
+defineRule('numeric', numeric);
 
 defineRule('minLength', (value: string, [limit]:[number]) => {
   // The field is empty so it should pass
@@ -64,11 +101,26 @@ defineRule('minLength', (value: string, [limit]:[number]) => {
   return true;
 });
 
+defineRule('postcode', (value: string) => {
+  const postcodePattern = /^\d{4}[A-Za-z]{2}$/;
+  if (!value || !value.length) {
+    return 'Dit veld is verplicht.';
+  }
+  if (value.length < 6) {
+    return 'Veld lengte incorrect (6 tekens: 1234AA).';
+  }
+  if (!postcodePattern.test(value)) {
+    return 'Veld moet een geldige postcode zijn (1234AA).';
+  }
+  return true;
+});
+
 @Options({
   components: {
     Form,
     Field,
     TextInput,
+    BaseInput,
   },
   props: { },
 })
@@ -86,10 +138,8 @@ export default class MyCarForm extends Vue {
     console.log('modelTest', this.modelTest);
   }
 
-  // private message = 'Hello, World!';
-
   onSubmitForm(formData: object) : void {
-    console.log(formData);
+    console.log({formData});
   }
 
   async searchCar(valueField: string): Promise<AllVehicleData | undefined> {
@@ -104,14 +154,6 @@ export default class MyCarForm extends Vue {
       this.thereAnyCar = true;
     }
     return carRes;
-  }
-
-  getInputValue(value: string): void {
-    // console.log('value', value);
-    if (value.length === 6) {
-      console.log('make call', value);
-      
-    }
   }
 
   mounted() : void {
@@ -153,7 +195,13 @@ export default class MyCarForm extends Vue {
   width: 100%;
   border: 1px solid gray;
   border-radius: 10px;
-  margin-top: 10px;
+  padding: 0 50px 0 20px;
+}
+
+.form-wrapper .input-field:focus,
+.form-wrapper .input-field:focus-visible {
+  border: 1px solid rgb(63, 63, 63) !important;
+  outline: none;
 }
 
 .form-wrapper .submit-button {
@@ -164,5 +212,10 @@ export default class MyCarForm extends Vue {
   border-radius: 10px;
   margin-top: 20px;
   cursor: pointer;
+}
+
+.error-text {
+  color: brown;
+  font-size: 12px;
 }
 </style>

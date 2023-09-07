@@ -8,39 +8,45 @@
       :rules="rules"
       type="text"
       class="input-field license-field"
-      @input="onInput"
+      @input="() => onInput(valueField)"
     /> -->
-    
 
     <Field
       :name="fieldName"
-      :placeholder="fieldName"
       v-model="valueField"
       :rules="rules"
       v-slot="{ field, handleChange }"
     >
-      <div>
+      <div class="input-wrapper">
         <input
           :placeholder="fieldName"
           :value="replaceCharacters(field.value)"
           maxlength="6"
           type="text"
-          class="input-field license-field"
+          @input="handleChange"
           @blur="handleChange"
           @change="handleChange"
-          @keyup.enter="() => searchValue()"
+          @keyup.enter="searchValue"
+          class="input-field license-field"
         />
-        <button @click="() => searchValue()" type="button">Emiting</button>
+
+        <!-- Icon -->
+        <img
+          v-if="valueField.length > 0"
+          src="../../assets/img/icons/ic_search_black.svg"
+          alt="Search black icon"
+          class="input-icon"
+          @click="searchValue"
+        >
+        <img
+          v-else
+          src="../../assets/img/icons/ic_search_gray.svg"
+          alt="Search gray icon"
+          class="input-icon"
+          @click="searchValue"
+        >
       </div>
     </Field>
-    <!-- <input
-      v-model="valueField"
-      :name="fieldName"
-      :placeholder="fieldName"
-      type="text"
-      class="input-field license-field"
-    /> -->
-    <!-- <button @click="$emit('on-fetch', field.value)" type="button">Emiting</button> -->
     <ErrorMessage :name="fieldName" class="error-text"/>
   </div>
 </template>
@@ -66,19 +72,10 @@ import { Options, Vue, setup } from 'vue-class-component';
       type: String,
     },
   },
-  emits: ['on-fetch', 'on-input'],
+  emits: ['on-fetch'],
 })
 export default class TextInput extends Vue {
   valueField = '';
-
-  // mounted() : void {
-  //   console.log('mounted');
-  // }
-
-  onInput() : void {
-    this.valueField = this.valueField.trim().replace(/[^A-Z0-9]/ig, '').toUpperCase();
-    this.$emit('on-input', this.valueField);
-  }
 
   replaceCharacters(input: string) : string {
     this.valueField = this.valueField.trim().replace(/[^A-Z0-9]/ig, '').toUpperCase();
@@ -86,9 +83,23 @@ export default class TextInput extends Vue {
   }
 
   searchValue() : void {
-    console.log('searchValue', this.valueField)
+    // console.log('searchValue', this.valueField)
     this.$emit('on-fetch', this.valueField);
   }
+
+  onInput(searchText: string) : void {
+    console.log('searchText', searchText);
+  }
+
+  // TODO: make normal searching
+  // inputTimeout: any;
+  // onInput(input: string) :void {
+  //   console.log('onInput', input);
+  //   clearTimeout(this.inputTimeout);
+  //   this.inputTimeout = setTimeout(() => {
+  //     this.searchValue();
+  //   }, 700);
+  // }
 
   /** Setup */
   // myCarForm = setup(() => {
@@ -106,13 +117,16 @@ export default class TextInput extends Vue {
 }
 </script>
 
-<style lang="css">
-.license-field {
-  border: 2px solid black;
+<style scoped lang="css">
+.input-wrapper {
+  position: relative;
+  display: flex;
+  margin-top: 10px;
 }
 
-.error-text {
-  color: brown;
-  font-size: 12px;
+.input-wrapper .input-icon {
+  position: absolute;
+  right: 16px;
+  top: 8px;
 }
 </style>
