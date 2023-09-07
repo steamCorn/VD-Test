@@ -58,7 +58,7 @@ import { Form, Field, ErrorMessage } from 'vee-validate';
       default: 50,
     },
   },
-  emits: ['on-fetch'],
+  emits: [],
 })
 export default class TextInput extends Vue {
   inputValue = ''.toUpperCase();

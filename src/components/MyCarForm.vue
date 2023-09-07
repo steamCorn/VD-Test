@@ -30,7 +30,6 @@
         :rules="'required|length:6|postcode'"
         :maxlength="6"
         :placeholder="'Enter your postcode'"
-        @on-fetch="searchCar"
       />
 
       <!-- House number -->
@@ -41,18 +40,29 @@
         :maxlength="4"
         :type="'number'"
         :placeholder="'Enter your house number'"
-        @on-fetch="searchCar"
       />
 
       <!-- House number addition -->
       <BaseInput
-        fieldName="houseNumber"
+        fieldName="houseAddition"
         :fieldTitle="'House number addition'"
         :maxlength="2"
         :type="'number'"
         :placeholder="'Enter your house number addition'"
-        @on-fetch="searchCar"
       />
+
+      <!-- <div class="base-input-wrapper">
+        <label for="houseAddition">House number addition</label>
+        <Field
+          name="houseAddition"
+          placeholder="Enter your house number addition"
+          v-model="addition"
+          :value="addition"
+          :maxlength="2"
+          class="input-field input-wrapper"
+        />
+        <ErrorMessage name="houseAddition" class="error-text"/>
+      </div> -->
 
       <button class="submit-button" type="submit">Ok</button>
     </Form>
@@ -74,7 +84,7 @@
 import { ref } from 'vue';
 import { Options, Vue, setup } from 'vue-class-component';
 /** Validation */
-import { Form, Field, defineRule } from 'vee-validate';
+import { Form, Field, ErrorMessage, defineRule } from 'vee-validate';
 import { required, length, numeric } from '@vee-validate/rules';
 /** Components */
 import TextInput from './formElements/TextInput.vue';
@@ -121,6 +131,7 @@ defineRule('postcode', (value: string) => {
     Field,
     TextInput,
     BaseInput,
+    ErrorMessage,
   },
   props: { },
 })
@@ -133,6 +144,7 @@ export default class MyCarForm extends Vue {
   };
   thereAnyCar = false;
   modelTest = '';
+  addition = '';
 
   onInputTest() : void {
     console.log('modelTest', this.modelTest);
