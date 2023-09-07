@@ -18,7 +18,7 @@
       <TextInput
         fieldName="license"
         fieldTitle="License plate"
-        :rules="'required|length:6'"
+        :rules="'required|minLength:6'"
         @on-input="getInputValue"
         @on-fetch="searchCar"
       />
@@ -27,22 +27,42 @@
     </Form>
 
     <div>
-      <h1>{{ carData.kenteken }}</h1>
-      <h2>{{ carData.merk }}</h2>
-      <h2>{{ carData.datum_eerste_toelating }}</h2>
-      <h3>{{ carData.eerste_kleur }}</h3>
+      <h2 v-if="thereAnyCar">There no such car</h2>
+      <div v-else>
+        <h1>{{ carData.kenteken }}</h1>
+        <h2>{{ carData.merk }}</h2>
+        <h2>{{ carData.datum_eerste_toelating }}</h2>
+        <h4>{{ carData.eerste_kleur }}</h4>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Form, Field } from 'vee-validate';
+import { Form, Field, defineRule } from 'vee-validate';
+import { required, length, min } from '@vee-validate/rules';
 import { Options, Vue, setup } from 'vue-class-component';
 import { ref } from 'vue';
 import TextInput from './formElements/TextInput.vue';
 import { VehicleNL } from '../interfaces/Vehicle';
 import AllVehicleData from '../models/for_API_Response/AllVehicleData';
 import fetchVehicle from '../api/externalAPI';
+
+defineRule('required', required);
+defineRule('length', length);
+defineRule('min', min);
+
+defineRule('minLength', (value: string, [limit]:[number]) => {
+  // The field is empty so it should pass
+  console.log('value rules', value, 'value length', value.length)
+  if (!value || !value.length) {
+    return true;
+  }
+  if (value.length < limit || value.length > limit) {
+    return `This field must be at least ${limit} characters`;
+  }
+  return true;
+});
 
 @Options({
   components: {
@@ -59,7 +79,7 @@ export default class MyCarForm extends Vue {
     datum_eerste_toelating: '',
     eerste_kleur: '',
   };
-  // value = '';
+  thereAnyCar = false;
   modelTest = '';
 
   onInputTest() : void {
@@ -77,14 +97,20 @@ export default class MyCarForm extends Vue {
     console.log(valueField);
     const carRes = await fetchVehicle(valueField);
     console.log('carRes', carRes);
-    this.carData = { ...carRes } as VehicleNL;
+    if (carRes !== undefined) {
+      this.carData = { ...carRes } as VehicleNL;
+      this.thereAnyCar = false;
+    } else {
+      this.thereAnyCar = true;
+    }
     return carRes;
   }
 
   getInputValue(value: string): void {
-    console.log('value', value);
-    if(value.length === 6){
+    // console.log('value', value);
+    if (value.length === 6) {
       console.log('make call', value);
+      
     }
   }
 
