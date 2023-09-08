@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 export interface VehicleData {
   aantal_cilinders: string;
   aantal_deuren: string;
@@ -56,4 +57,3 @@ export interface VehicleData {
   wielbasis: string;
   zuinigheidsclassificatie: string;
 }
-

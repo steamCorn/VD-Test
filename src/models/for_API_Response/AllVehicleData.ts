@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 // export default interface AllVehicleData {
 //   aantal_cilinders: string;
 //   aantal_deuren: string;
@@ -258,9 +259,8 @@ export default class AllVehicleData {
   //   const { kenteken, merk, datum_eerste_toelating } = 
   // }
 
-  get formData(): { name: string, ingredients: string, steps: string } {
-    const { name, ingredients, steps } = this.recipe;
-    return { name, ingredients, steps };
-  }
+  // get formData(): { name: string, ingredients: string, steps: string } {
+  //   const { name, ingredients, steps } = this.recipe;
+  //   return { name, ingredients, steps };
+  // }
 }
-

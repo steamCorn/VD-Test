@@ -53,6 +53,14 @@
         :labelField="'House number addition'"
       />
 
+      <!-- Birthday field -->
+      <DatePicker
+        field-name="birthDate"
+        :field-title="'Birth date'"
+        :rules="'numberAddition'"
+        :labelField="'Birth date'"
+      />
+
       <!-- Mileage -->
       <DropdownInput
         fieldName="mileage"
@@ -89,6 +97,7 @@ import { required, length, numeric } from '@vee-validate/rules';
 import SearchInput from './formElements/SearchInput.vue';
 import BaseInput from './formElements/BaseInput.vue';
 import DropdownInput from './formElements/DropdownInput.vue';
+import DatePicker from './formElements/DatePicker.vue';
 /** Interface and Modals */
 import { VehicleNL } from '../interfaces/Vehicle';
 import AllVehicleData from '../models/for_API_Response/AllVehicleData';
@@ -141,6 +150,7 @@ defineRule('numberAddition', (value: string) => {
     Field,
     SearchInput,
     BaseInput,
+    DatePicker,
     DropdownInput,
     ErrorMessage,
   },

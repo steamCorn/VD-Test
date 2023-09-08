@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 export interface VehicleEN {
   licensePlate: string;
   mark: string;
@@ -16,7 +17,7 @@ export interface VehicleNL {
 //   brand: string;
 //   dateFirstAdmission: string;
 
-//   constructor() { 
+//   constructor() {
 //     this.licensePlate = '';
 //     this.brand = '';
 //     this.dateFirstAdmission = '';
