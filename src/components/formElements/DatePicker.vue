@@ -15,7 +15,6 @@
       :label="labelField"
     />
     <ErrorMessage :name="fieldName" class="error-text"/>
-    <input type="time">
   </div>
 </template>
 
