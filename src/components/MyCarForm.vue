@@ -3,9 +3,9 @@
     <!-- <h1>counter: {{ myCarForm.counter }}</h1>
     <button @click="myCarForm.increment"> CLick to ++ </button> -->
     <Form @submit="onSubmitForm">
-      <Field name="firstInput" type="text" v-model="modelTest" rules="required" @input="onInputTest"/>
+      <!-- <Field name="firstInput" type="text" v-model="modelTest" rules="required" @input="onInputTest"/> -->
       <!-- <div>{{ modelTest }}</div> -->
-      <Field name="secondInput" type="number"/>
+      <!-- <Field name="secondInput" type="number"/> -->
       <!-- <input name="firstInput" v-model="value" />
       <pre>{{ value }}</pre> -->
       <!-- <Field v-slot="{ field }" name="terms" type="checkbox" :value="true">
@@ -16,7 +16,7 @@
       </Field> -->
 
       <!-- License plate -->
-      <TextInput
+      <SearchInput
         fieldName="license"
         fieldTitle="License plate"
         :rules="'required|minLength:6'"
@@ -30,6 +30,7 @@
         :rules="'required|length:6|postcode'"
         :maxlength="6"
         :placeholder="'Enter your postcode'"
+        :labelField="'Zipcode'"
       />
 
       <!-- House number -->
@@ -37,32 +38,30 @@
         fieldName="houseNumber"
         :fieldTitle="'House number'"
         :rules="'required|numeric'"
-        :maxlength="4"
-        :type="'number'"
+        :maxlength="5"
         :placeholder="'Enter your house number'"
+        :labelField="'House number'"
       />
 
       <!-- House number addition -->
       <BaseInput
-        fieldName="houseAddition"
-        :fieldTitle="'House number addition'"
-        :maxlength="2"
-        :type="'number'"
+        field-name="houseAddition"
+        :field-title="'House number addition'"
+        :maxlength="3"
+        :rules="'numberAddition'"
         :placeholder="'Enter your house number addition'"
+        :labelField="'House number addition'"
       />
 
-      <!-- <div class="base-input-wrapper">
-        <label for="houseAddition">House number addition</label>
-        <Field
-          name="houseAddition"
-          placeholder="Enter your house number addition"
-          v-model="addition"
-          :value="addition"
-          :maxlength="2"
-          class="input-field input-wrapper"
-        />
-        <ErrorMessage name="houseAddition" class="error-text"/>
-      </div> -->
+      <!-- Mileage -->
+      <DropdownInput
+        fieldName="mileage"
+        :fieldTitle="'Mileage'"
+        :placeholder="'Select option'"
+        :option-list="mileageOptions"
+        :selected-option="mileageOptions[1]"
+        @on-select="setMileageOption"
+      />
 
       <button class="submit-button" type="submit">Ok</button>
     </Form>
@@ -87,8 +86,9 @@ import { Options, Vue, setup } from 'vue-class-component';
 import { Form, Field, ErrorMessage, defineRule } from 'vee-validate';
 import { required, length, numeric } from '@vee-validate/rules';
 /** Components */
-import TextInput from './formElements/TextInput.vue';
+import SearchInput from './formElements/SearchInput.vue';
 import BaseInput from './formElements/BaseInput.vue';
+import DropdownInput from './formElements/DropdownInput.vue';
 /** Interface and Modals */
 import { VehicleNL } from '../interfaces/Vehicle';
 import AllVehicleData from '../models/for_API_Response/AllVehicleData';
@@ -125,12 +125,23 @@ defineRule('postcode', (value: string) => {
   return true;
 });
 
+defineRule('numberAddition', (value: string) => {
+  const alpha = /[A-Za-z]/g;
+  const number = /[0-9]/g;
+  if (number.test(value) && alpha.test(value)) {
+    console.log('letter and number', value);
+    return 'Should be only number or letter.';
+  }
+  return true;
+});
+
 @Options({
   components: {
     Form,
     Field,
-    TextInput,
+    SearchInput,
     BaseInput,
+    DropdownInput,
     ErrorMessage,
   },
   props: { },
@@ -144,7 +155,41 @@ export default class MyCarForm extends Vue {
   };
   thereAnyCar = false;
   modelTest = '';
-  addition = '';
+
+  mileageOptions = [
+    {
+      id: 1,
+      value: '0 t/m 7500 KM',
+    },
+    {
+      id: 2,
+      value: '7501 t/m 10000 KM',
+    },
+    {
+      id: 3,
+      value: '10001 t/m 12000 KM',
+    },
+    {
+      id: 4,
+      value: '12001 t/m 15000 KM',
+    },
+    {
+      id: 5,
+      value: '15000 t/m 20000 KM',
+    },
+    {
+      id: 6,
+      value: '20001 t/m 25000 KM',
+    },
+    {
+      id: 7,
+      value: '25001 t/m 30000 KM',
+    },
+    {
+      id: 8,
+      value: '30001 t/m 90000 KM',
+    },
+  ]
 
   onInputTest() : void {
     console.log('modelTest', this.modelTest);
@@ -155,8 +200,6 @@ export default class MyCarForm extends Vue {
   }
 
   async searchCar(valueField: string): Promise<AllVehicleData | undefined> {
-    console.log('Emit')
-    console.log(valueField);
     const carRes = await fetchVehicle(valueField);
     console.log('carRes', carRes);
     if (carRes !== undefined) {
@@ -166,6 +209,10 @@ export default class MyCarForm extends Vue {
       this.thereAnyCar = true;
     }
     return carRes;
+  }
+
+  setMileageOption(option: object): void {
+    console.log('setMileageOption option', option);
   }
 
   mounted() : void {
@@ -227,6 +274,8 @@ export default class MyCarForm extends Vue {
 }
 
 .error-text {
+  position: absolute;
+  bottom: 0;
   color: brown;
   font-size: 12px;
 }

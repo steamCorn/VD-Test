@@ -1,6 +1,6 @@
 <template>
   <div class="base-input-wrapper">
-    <label :for="fieldName">{{ fieldTitle }}</label>
+    <label :for="fieldName" class="input-title">{{ fieldTitle }}</label>
     <Field
       :name="fieldName"
       :placeholder="placeholder"
@@ -8,9 +8,11 @@
       :value="replaceCharacters(inputValue)"
       :rules="rules"
       :maxlength="maxlength"
+      :max="max"
       :type="type"
       class="input-field input-wrapper"
       @input="onInput"
+      :label="labelField"
     />
     <ErrorMessage :name="fieldName" class="error-text"/>
   </div>
@@ -21,6 +23,8 @@
 import { Options, Vue } from 'vue-class-component';
 /** Validation */
 import { Form, Field, ErrorMessage } from 'vee-validate';
+/** Interface */
+import IBaseInput from '../../interfaces/IBaseInput';
 
 @Options({
   components: {
@@ -57,10 +61,27 @@ import { Form, Field, ErrorMessage } from 'vee-validate';
       require: false,
       default: 50,
     },
+    max: {
+      type: Number,
+      require: false,
+    },
+    labelField: {
+      type: String,
+      require: false,
+    },
   },
   emits: [],
 })
-export default class TextInput extends Vue {
+export default class BaseInput extends Vue implements IBaseInput {
+  fieldTitle!: string;
+  fieldName!: string;
+  type!: string;
+  rules: string | undefined;
+  placeholder!: string;
+  maxlength: number | undefined;
+  max: number | undefined;
+  labelField: string | undefined;
+
   inputValue = ''.toUpperCase();
 
   replaceCharacters(input: string) : string {
@@ -89,12 +110,4 @@ export default class TextInput extends Vue {
 </script>
 
 <style scoped lang="css">
-.base-input-wrapper {
-  position: relative;
-  margin-top: 20px;
-}
-
-.base-input-wrapper .input-wrapper {
-  margin-top: 10px;
-}
 </style>

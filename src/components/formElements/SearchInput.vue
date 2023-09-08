@@ -1,6 +1,6 @@
 <template>
-  <div class="license">
-    <label :for="fieldName">{{ fieldTitle }}</label>
+  <div class="base-input-wrapper">
+    <label :for="fieldName" class="input-title">{{ fieldTitle }}</label>
     <!-- <Field
       :name="fieldName"
       :placeholder="fieldName"
@@ -52,8 +52,12 @@
 </template>
 
 <script lang="ts">
-import { Form, Field, ErrorMessage } from 'vee-validate';
+/** Vue */
 import { Options, Vue, setup } from 'vue-class-component';
+/** Validation */
+import { Form, Field, ErrorMessage } from 'vee-validate';
+/** Interface */
+import ISearchInput from '../../interfaces/ISearchInput';
 
 @Options({
   components: {
@@ -74,7 +78,11 @@ import { Options, Vue, setup } from 'vue-class-component';
   },
   emits: ['on-fetch'],
 })
-export default class TextInput extends Vue {
+export default class SearchInput extends Vue implements ISearchInput {
+  fieldTitle!: string;
+  fieldName!: string;
+  rules!: string;
+
   valueField = '';
 
   replaceCharacters(input: string) : string {
@@ -84,6 +92,9 @@ export default class TextInput extends Vue {
 
   searchValue() : void {
     // console.log('searchValue', this.valueField)
+    if (!this.valueField.length) {
+      return;
+    }
     this.$emit('on-fetch', this.valueField);
   }
 
@@ -121,12 +132,12 @@ export default class TextInput extends Vue {
 .input-wrapper {
   position: relative;
   display: flex;
-  margin-top: 10px;
 }
 
 .input-wrapper .input-icon {
   position: absolute;
   right: 16px;
   top: 8px;
+  cursor: pointer;
 }
 </style>
