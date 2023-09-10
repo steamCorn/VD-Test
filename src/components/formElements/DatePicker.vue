@@ -16,26 +16,26 @@
       :label="labelField"
     /> -->
     <Field
-      v-slot="{ value }"
+      v-slot="{ value, handleChange }"
       :name="fieldName"
       :rules="rules"
-      :value="formatDDMMYYYY(dateValue)"
       :label="labelField"
-    >
+      >
+      <!-- :value="formatDDMMYYYY(dateValue)" -->
+    <!-- <pre>{{ value }}</pre> -->
       <input
         type="date"
         :max="todayDate"
         :min="minDate"
-        v-model="dateValue"
         class="input-field input-wrapper"
-        @input="onInput(value)"
-      >
-      <pre>{{ value }}</pre>
-      <pre>{{ dateValue }}</pre>
+        @change="handleChange"
+        >
+        <!-- @keypress="handleChange" -->
+      <!-- @input="onInput(value)" -->
+      <!-- <pre>{{ dateValue }}</pre> -->
       <!-- v-model="dateValue"
         :value="dateValue" -->
     </Field>
-    <pre>{{ dateValue }}</pre>
     <ErrorMessage :name="fieldName" class="error-text"/>
   </div>
 </template>
@@ -114,9 +114,9 @@ export default class DatePicker extends Vue implements IBaseInput {
   //   console.log('onInput', this.dateValue);
   // }
 
-  onInput(date: string): void {
-    console.log('onInput', date);
-  }
+  // onInput(date: string): void {
+  //   console.log('onInput', date);
+  // }
 
   formatDDMMYYYY(date: string) : string | void {
     console.log('date', date)

@@ -15,13 +15,13 @@
       :name="fieldName"
       v-model="valueField"
       :rules="rules"
-      v-slot="{ field, handleChange }"
+      v-slot="{ value, handleChange }"
       :label="labelField"
     >
       <div class="input-wrapper">
         <input
           :placeholder="fieldName"
-          :value="replaceCharacters(field.value)"
+          :value="replaceCharacters(value)"
           maxlength="6"
           type="text"
           @input="handleChange"

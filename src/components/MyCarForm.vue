@@ -58,7 +58,7 @@
       <DatePicker
         field-name="birthDate"
         :field-title="'Birth date'"
-        :rules="'numberAddition'"
+        :rules="'required|birthDate'"
         :labelField="'Birth date'"
       />
 
@@ -94,6 +94,8 @@ import { Options, Vue, setup } from 'vue-class-component';
 /** Validation */
 import { Form, Field, ErrorMessage, defineRule } from 'vee-validate';
 import { required, length, numeric } from '@vee-validate/rules';
+/** External library */
+import moment from 'moment';
 /** Components */
 import SearchInput from './formElements/SearchInput.vue';
 import BaseInput from './formElements/BaseInput.vue';
@@ -141,6 +143,17 @@ defineRule('numberAddition', (value: string) => {
   if (number.test(value) && alpha.test(value)) {
     console.log('letter and number', value);
     return 'Should be only number or letter.';
+  }
+  return true;
+});
+
+defineRule('birthDate', (value: string) => {
+  const todayDate = moment(new Date());
+  const minDate = moment().subtract(100, 'years');
+  const formateValue = moment(new Date(value));
+
+  if (moment(formateValue).isAfter(todayDate) || moment(formateValue).isBefore(minDate)) {
+    return 'Your date is not valid';
   }
   return true;
 });
