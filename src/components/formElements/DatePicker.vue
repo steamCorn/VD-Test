@@ -1,11 +1,12 @@
 <template>
   <div class="base-input-wrapper">
     <label :for="fieldName" class="input-title">{{ fieldTitle }}</label>
-    <Field
+    <!-- <Field
+      v-slot="{ value }"
       :name="fieldName"
       :placeholder="placeholder"
-      v-model="inputValue"
-      :value="replaceCharacters(inputValue)"
+      v-model="dateValue"
+      :value="dateValue"
       :rules="rules"
       :maxlength="maxlength"
       :max="max"
@@ -13,7 +14,28 @@
       class="input-field input-wrapper"
       @input="onInput"
       :label="labelField"
-    />
+    /> -->
+    <Field
+      v-slot="{ value }"
+      :name="fieldName"
+      :rules="rules"
+      :value="formatDDMMYYYY(dateValue)"
+      :label="labelField"
+    >
+      <input
+        type="date"
+        :max="todayDate"
+        :min="minDate"
+        v-model="dateValue"
+        class="input-field input-wrapper"
+        @input="onInput(value)"
+      >
+      <pre>{{ value }}</pre>
+      <pre>{{ dateValue }}</pre>
+      <!-- v-model="dateValue"
+        :value="dateValue" -->
+    </Field>
+    <pre>{{ dateValue }}</pre>
     <ErrorMessage :name="fieldName" class="error-text"/>
   </div>
 </template>
@@ -23,6 +45,8 @@
 import { Options, Vue } from 'vue-class-component';
 /** Validation */
 import { Form, Field, ErrorMessage } from 'vee-validate';
+/** External library */
+import moment from 'moment';
 /** Interface */
 import IBaseInput from '../../interfaces/IBaseInput';
 
@@ -82,15 +106,26 @@ export default class DatePicker extends Vue implements IBaseInput {
   max: number | undefined;
   labelField: string | undefined;
 
-  inputValue = ''.toUpperCase();
+  dateValue = '';
+  todayDate = moment(new Date()).format('YYYY-MM-DD');
+  minDate = moment().subtract(100, 'years').format('YYYY-MM-DD');
 
-  replaceCharacters(input: string) : string {
-    this.inputValue = this.inputValue.trim().replace(/[^A-Z0-9]/ig, '').toUpperCase();
-    return input.trim().replace(/[^A-Z0-9]/ig, '').toUpperCase();
+  // onInput(): void {
+  //   console.log('onInput', this.dateValue);
+  // }
+
+  onInput(date: string): void {
+    console.log('onInput', date);
   }
 
-  onInput(): void {
-    console.log('onInput', this.inputValue);
+  formatDDMMYYYY(date: string) : string | void {
+    console.log('date', date)
+    let result = date;
+    if (date) {
+      result = moment(new Date(date)).format('DD-MM-YYYY');
+    }
+    console.log('result', result)
+    return result;
   }
 
   /** Setup */
@@ -110,4 +145,13 @@ export default class DatePicker extends Vue implements IBaseInput {
 </script>
 
 <style scoped lang="css">
+/* input[type="date"]::-webkit-calendar-picker-indicator {
+    color: rgba(0, 0, 0, 0);
+    opacity: 1;
+    display: block;
+    background: url(https://mywildalberta.ca/images/GFX-MWA-Parks-Reservations.png) no-repeat;
+    width: 20px;
+    height: 20px;
+    border-width: thin;
+} */
 </style>

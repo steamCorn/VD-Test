@@ -16,6 +16,7 @@
       v-model="valueField"
       :rules="rules"
       v-slot="{ field, handleChange }"
+      :label="labelField"
     >
       <div class="input-wrapper">
         <input
@@ -68,12 +69,19 @@ import ISearchInput from '../../interfaces/ISearchInput';
   props: {
     fieldTitle: {
       type: String,
+      require: false,
     },
     fieldName: {
       type: String,
+      require: true,
     },
     rules: {
       type: String,
+      require: false,
+    },
+    labelField: {
+      type: String,
+      require: false,
     },
   },
   emits: ['on-fetch'],
@@ -82,6 +90,7 @@ export default class SearchInput extends Vue implements ISearchInput {
   fieldTitle!: string;
   fieldName!: string;
   rules!: string;
+  labelField: string | undefined;
 
   valueField = '';
 

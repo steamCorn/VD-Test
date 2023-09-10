@@ -82,7 +82,7 @@ export default class BaseInput extends Vue implements IBaseInput {
   max: number | undefined;
   labelField: string | undefined;
 
-  inputValue = ''.toUpperCase();
+  inputValue = '';
 
   replaceCharacters(input: string) : string {
     this.inputValue = this.inputValue.trim().replace(/[^A-Z0-9]/ig, '').toUpperCase();

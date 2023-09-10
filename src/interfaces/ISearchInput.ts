@@ -1,6 +1,7 @@
 /* eslint-disable semi */
 export default interface ISearchInput {
-  fieldTitle: string;
+  fieldTitle: string | undefined;
   fieldName: string;
-  rules: string;
+  rules: string | undefined;
+  labelField: string | undefined;
 }

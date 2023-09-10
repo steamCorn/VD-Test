@@ -21,6 +21,7 @@
         fieldTitle="License plate"
         :rules="'required|minLength:6'"
         @on-fetch="searchCar"
+        :labelField="'License plate'"
       />
 
       <!-- Postcode -->
