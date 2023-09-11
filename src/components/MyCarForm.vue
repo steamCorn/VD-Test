@@ -1,20 +1,6 @@
 <template>
   <div class="form-wrapper">
-    <!-- <h1>counter: {{ myCarForm.counter }}</h1>
-    <button @click="myCarForm.increment"> CLick to ++ </button> -->
     <Form @submit="onSubmitForm">
-      <!-- <Field name="firstInput" type="text" v-model="modelTest" rules="required" @input="onInputTest"/> -->
-      <!-- <div>{{ modelTest }}</div> -->
-      <!-- <Field name="secondInput" type="number"/> -->
-      <!-- <input name="firstInput" v-model="value" />
-      <pre>{{ value }}</pre> -->
-      <!-- <Field v-slot="{ field }" name="terms" type="checkbox" :value="true">
-        <label>
-          <input type="checkbox" name="terms" v-bind="field" :value="true" />
-          I agree
-        </label>
-      </Field> -->
-
       <!-- License plate -->
       <SearchInput
         fieldName="license"
@@ -55,11 +41,12 @@
       />
 
       <!-- Birthday field -->
-      <DatePicker
+      <DateInput
         field-name="birthDate"
         :field-title="'Birth date'"
         :rules="'required|birthDate'"
         :labelField="'Birth date'"
+        @select-date="setClaimFreeYears"
       />
 
       <!-- Mileage -->
@@ -67,10 +54,25 @@
         fieldName="mileage"
         :fieldTitle="'Mileage'"
         :placeholder="'Select option'"
+        :rules="'required|mileage'"
         :option-list="mileageOptions"
-        :selected-option="mileageOptions[1]"
+        :selected-option="selectedMileage"
         @on-select="setMileageOption"
       />
+
+      <pre>{{ selectedMileage }}</pre>
+
+      <!-- Claim Free years -->
+      <!-- <DropdownInput
+        fieldName="claimYear"
+        :fieldTitle="'Claim Free years'"
+        :placeholder="'Select option'"
+        :option-list="claimOptions"
+        :selected-option="claimOptions[4]"
+        @on-select="setMileageOption"
+      /> -->
+
+      <!-- <pre>{{ claimOptions[4] }}</pre> -->
 
       <button class="submit-button" type="submit">Ok</button>
     </Form>
@@ -89,8 +91,7 @@
 
 <script lang="ts">
 /** Vue */
-import { ref } from 'vue';
-import { Options, Vue, setup } from 'vue-class-component';
+import { Options, Vue } from 'vue-class-component';
 /** Validation */
 import { Form, Field, ErrorMessage, defineRule } from 'vee-validate';
 import { required, length, numeric } from '@vee-validate/rules';
@@ -100,10 +101,13 @@ import moment from 'moment';
 import SearchInput from './formElements/SearchInput.vue';
 import BaseInput from './formElements/BaseInput.vue';
 import DropdownInput from './formElements/DropdownInput.vue';
-import DatePicker from './formElements/DatePicker.vue';
+import DateInput from './formElements/DateInput.vue';
 /** Interface and Modals */
 import { VehicleNL } from '../interfaces/Vehicle';
 import AllVehicleData from '../models/for_API_Response/AllVehicleData';
+import IDropdownOption from '../interfaces/IDropdownOption';
+/** Constants */
+import mileageOptions from '../constants/mileageOptions';
 /** API */
 import fetchVehicle from '../api/externalAPI';
 
@@ -158,13 +162,18 @@ defineRule('birthDate', (value: string) => {
   return true;
 });
 
+defineRule('mileage', (value: string) => {
+  console.log('mileage', value)
+  return true;
+});
+
 @Options({
   components: {
     Form,
     Field,
     SearchInput,
     BaseInput,
-    DatePicker,
+    DateInput,
     DropdownInput,
     ErrorMessage,
   },
@@ -180,47 +189,18 @@ export default class MyCarForm extends Vue {
   thereAnyCar = false;
   modelTest = '';
 
-  mileageOptions = [
-    {
-      id: 1,
-      value: '0 t/m 7500 KM',
-    },
-    {
-      id: 2,
-      value: '7501 t/m 10000 KM',
-    },
-    {
-      id: 3,
-      value: '10001 t/m 12000 KM',
-    },
-    {
-      id: 4,
-      value: '12001 t/m 15000 KM',
-    },
-    {
-      id: 5,
-      value: '15000 t/m 20000 KM',
-    },
-    {
-      id: 6,
-      value: '20001 t/m 25000 KM',
-    },
-    {
-      id: 7,
-      value: '25001 t/m 30000 KM',
-    },
-    {
-      id: 8,
-      value: '30001 t/m 90000 KM',
-    },
-  ]
+  mileageOptions = mileageOptions;
+  selectedMileage: IDropdownOption = mileageOptions[1];
+
+  maxClaimYears = 0;
+  claimOptions: string[] = ['-5', '-4', '-3', '-2', '-1', '0'];
 
   onInputTest() : void {
     console.log('modelTest', this.modelTest);
   }
 
   onSubmitForm(formData: object) : void {
-    console.log({formData});
+    console.log({ formData });
   }
 
   async searchCar(valueField: string): Promise<AllVehicleData | undefined> {
@@ -235,12 +215,20 @@ export default class MyCarForm extends Vue {
     return carRes;
   }
 
-  setMileageOption(option: object): void {
-    console.log('setMileageOption option', option);
+  setMileageOption(option: IDropdownOption): void {
+    this.selectedMileage = option;
   }
 
-  mounted() : void {
-    console.log('mounted');
+  setClaimFreeYears(value: string) : void {
+    const currentYear = moment(new Date()).year();
+    const birthYear = moment(value).year();
+    const maxValue = currentYear - birthYear - 18;
+    if (maxValue > 0) {
+      this.maxClaimYears = maxValue;
+      for (let i = 1; i <= maxValue; i++) {
+        this.claimOptions.push(i.toString());
+      }
+    }
   }
 
   // async findCar(valueField: string) : Promise<Vehicle[] | undefined> {
@@ -278,7 +266,7 @@ export default class MyCarForm extends Vue {
   width: 100%;
   border: 1px solid gray;
   border-radius: 10px;
-  padding: 0 50px 0 20px;
+  padding: 0 40px;
 }
 
 .form-wrapper .input-field:focus,

@@ -33,17 +33,10 @@
 
         <!-- Icon -->
         <img
-          v-if="valueField.length > 0"
-          src="../../assets/img/icons/ic_search_black.svg"
+          src="../../assets/img/icons/ic_search.svg"
           alt="Search black icon"
           class="input-icon"
-          @click="searchValue"
-        >
-        <img
-          v-else
-          src="../../assets/img/icons/ic_search_gray.svg"
-          alt="Search gray icon"
-          class="input-icon"
+          :class="{'opacity-icon' : valueField.length === 0}"
           @click="searchValue"
         >
       </div>
@@ -149,4 +142,9 @@ export default class SearchInput extends Vue implements ISearchInput {
   top: 8px;
   cursor: pointer;
 }
+
+.opacity-icon {
+  opacity: 0.5;
+}
+
 </style>
