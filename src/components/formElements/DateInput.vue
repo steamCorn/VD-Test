@@ -14,7 +14,7 @@
       <VueDatePicker
         v-model="selectedDate"
         placeholder="DD-MM-YYYY"
-        :format="formatDate(selectedDate)"
+        :format="formatDateInput(selectedDate)"
         :enable-time-picker="false"
         :max-date="todayDate"
         prevent-min-max-navigation
@@ -90,7 +90,7 @@ export default class DateInput extends Vue implements IDatepicker {
 
   date = new Date();
 
-  formatDate(date: Date) : string {
+  formatDateInput(date: Date) : string {
     if (!date) {
       return '';
     }
@@ -104,6 +104,11 @@ export default class DateInput extends Vue implements IDatepicker {
     return number < 10 ? `0${number}` : number;
     // return number < 10 ? number.toString().padStart(2, '0') : number;
   }
+
+  // TODO: delete it
+  // get birthDate() : string {
+  //   return moment(this.selectedDate).format('YYYY-MM-DD');
+  // }
 }
 </script>
 

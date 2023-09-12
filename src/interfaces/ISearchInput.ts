@@ -4,4 +4,5 @@ export default interface ISearchInput {
   fieldName: string;
   rules: string | undefined;
   labelField: string | undefined;
+  placeholder: string | undefined;
 }

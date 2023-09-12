@@ -1,16 +1,6 @@
 <template>
   <div class="base-input-wrapper">
     <label :for="fieldName" class="input-title">{{ fieldTitle }}</label>
-    <!-- <Field
-      :name="fieldName"
-      :placeholder="fieldName"
-      v-model="valueField"
-      :rules="rules"
-      type="text"
-      class="input-field license-field"
-      @input="() => onInput(valueField)"
-    /> -->
-
     <Field
       :name="fieldName"
       v-model="valueField"
@@ -20,11 +10,9 @@
     >
       <div class="input-wrapper">
         <input
-          :placeholder="fieldName"
+          :placeholder="placeholder"
           :value="replaceCharacters(value)"
-          maxlength="6"
           type="text"
-          @input="handleChange"
           @blur="handleChange"
           @change="handleChange"
           @keyup.enter="searchValue"
@@ -36,7 +24,7 @@
           src="../../assets/img/icons/ic_search.svg"
           alt="Search black icon"
           class="input-icon"
-          :class="{'opacity-icon' : valueField.length === 0}"
+          :class="{'opacity-icon' : valueField.length !== 6}"
           @click="searchValue"
         >
       </div>
@@ -47,7 +35,7 @@
 
 <script lang="ts">
 /** Vue */
-import { Options, Vue, setup } from 'vue-class-component';
+import { Options, Vue } from 'vue-class-component';
 /** Validation */
 import { Form, Field, ErrorMessage } from 'vee-validate';
 /** Interface */
@@ -76,6 +64,10 @@ import ISearchInput from '../../interfaces/ISearchInput';
       type: String,
       require: false,
     },
+    placeholder: {
+      type: String,
+      require: false,
+    },
   },
   emits: ['on-fetch'],
 })
@@ -84,6 +76,7 @@ export default class SearchInput extends Vue implements ISearchInput {
   fieldName!: string;
   rules!: string;
   labelField: string | undefined;
+  placeholder: string | undefined;
 
   valueField = '';
 
@@ -93,8 +86,7 @@ export default class SearchInput extends Vue implements ISearchInput {
   }
 
   searchValue() : void {
-    // console.log('searchValue', this.valueField)
-    if (!this.valueField.length) {
+    if (!this.valueField.length || this.valueField.length !== 6) {
       return;
     }
     this.$emit('on-fetch', this.valueField);
@@ -103,30 +95,6 @@ export default class SearchInput extends Vue implements ISearchInput {
   onInput(searchText: string) : void {
     console.log('searchText', searchText);
   }
-
-  // TODO: make normal searching
-  // inputTimeout: any;
-  // onInput(input: string) :void {
-  //   console.log('onInput', input);
-  //   clearTimeout(this.inputTimeout);
-  //   this.inputTimeout = setTimeout(() => {
-  //     this.searchValue();
-  //   }, 700);
-  // }
-
-  /** Setup */
-  // myCarForm = setup(() => {
-  //   const counter = ref(0);
-
-  //   function increment() {
-  //     counter.value = counter.value + 1;
-  //   }
-
-  //   return {
-  //     counter,
-  //     increment,
-  //   };
-  // })
 }
 </script>
 

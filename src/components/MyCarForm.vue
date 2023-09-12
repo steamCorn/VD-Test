@@ -5,11 +5,11 @@
       <SearchInput
         fieldName="license"
         fieldTitle="License plate"
+        :placeholder="'Enter your license plate as XXXXXX'"
         :rules="'required|minLength:6'"
         @on-fetch="searchCar"
         :labelField="'License plate'"
       />
-
       <!-- Postcode -->
       <BaseInput
         fieldName="zipcode"
@@ -19,7 +19,6 @@
         :placeholder="'Enter your postcode'"
         :labelField="'Zipcode'"
       />
-
       <!-- House number -->
       <BaseInput
         fieldName="houseNumber"
@@ -29,7 +28,6 @@
         :placeholder="'Enter your house number'"
         :labelField="'House number'"
       />
-
       <!-- House number addition -->
       <BaseInput
         field-name="houseAddition"
@@ -39,39 +37,34 @@
         :placeholder="'Enter your house number addition'"
         :labelField="'House number addition'"
       />
-
       <!-- Birthday field -->
       <DateInput
         field-name="birthDate"
         :field-title="'Birth date'"
-        :rules="'required|birthDate'"
+        rules="required|birthDate"
         :labelField="'Birth date'"
-        @select-date="setClaimFreeYears"
+        @select-date="setClaimFreeYearsOptions"
       />
-
       <!-- Mileage -->
-      <!-- <DropdownInput
+      <DropdownInput
         fieldName="mileage"
         :fieldTitle="'Mileage'"
+        :rules="'required'"
         :placeholder="'Select option'"
-        :option-list="mileageOptions"
+        :option-list="mileage"
         :selected-option="selectedMileage"
         @on-select="setMileageOption"
-      /> -->
-        <!-- :rules="'required|mileage'" -->
-
+      />
       <!-- Claim Free years -->
       <DropdownInput
         fieldName="claimYear"
         :fieldTitle="'Claim Free years'"
+        :rules="'required'"
         :placeholder="'Select option'"
-        :rules="'required|mileage'"
         :option-list="claimOptions"
         :selected-option="selectedClaimYear"
         @on-select="setSelectedClaimYear"
       />
-
-      <pre>{{ selectedClaimYear }}</pre>
 
       <button class="submit-button" type="submit">Ok</button>
     </Form>
@@ -101,27 +94,22 @@ import SearchInput from './formElements/SearchInput.vue';
 import BaseInput from './formElements/BaseInput.vue';
 import DropdownInput from './formElements/DropdownInput.vue';
 import DateInput from './formElements/DateInput.vue';
-/** Interface and Modals */
+/** Interface and modals */
 import { VehicleNL } from '../interfaces/Vehicle';
 import AllVehicleData from '../models/for_API_Response/AllVehicleData';
-import IDropdownOption from '../interfaces/IDropdownOption';
+import IFormDataSubmitForm from '../interfaces/IFormDataSubmitForm';
 /** Constants */
 import mileageOptions from '../constants/mileageOptions';
 /** API */
-import fetchVehicle from '../api/externalAPI';
+import { fetchVehicle, sendDataAsQueryParamsUrl } from '../api/externalAPI';
 
 defineRule('required', required);
 defineRule('length', length);
 defineRule('numeric', numeric);
 
 defineRule('minLength', (value: string, [limit]:[number]) => {
-  // The field is empty so it should pass
-  console.log('value rules', value, 'value length', value.length)
-  if (!value || !value.length) {
-    return true;
-  }
   if (value.length < limit || value.length > limit) {
-    return `This field must be at least ${limit} characters`;
+    return `Dit veld moet uit ${limit} tekens bestaan.`;
   }
   return true;
 });
@@ -132,10 +120,10 @@ defineRule('postcode', (value: string) => {
     return 'Dit veld is verplicht.';
   }
   if (value.length < 6) {
-    return 'Veld lengte incorrect (6 tekens: 1234AA).';
+    return 'Dit veld lengte incorrect (6 tekens: 1234AA).';
   }
   if (!postcodePattern.test(value)) {
-    return 'Veld moet een geldige postcode zijn (1234AA).';
+    return 'Dit veld moet een geldige postcode zijn (1234AA).';
   }
   return true;
 });
@@ -144,19 +132,24 @@ defineRule('numberAddition', (value: string) => {
   const alpha = /[A-Za-z]/g;
   const number = /[0-9]/g;
   if (number.test(value) && alpha.test(value)) {
-    console.log('letter and number', value);
-    return 'Should be only number or letter.';
+    return 'Dit veld mag alleen een cijfer of letter bevatten.';
   }
   return true;
 });
 
 defineRule('birthDate', (value: string) => {
+  console.log(value)
   const todayDate = moment(new Date());
   const minDate = moment().subtract(100, 'years');
-  const formateValue = moment(new Date(value));
-
-  if (moment(formateValue).isAfter(todayDate) || moment(formateValue).isBefore(minDate)) {
-    return 'Your date is not valid';
+  const formateValue = new Date(value);
+  // if (value === 'Invalid date') {
+  //   return 'Dit veld is verplicht.';
+  // }
+  if (moment(formateValue).isBefore(minDate)) {
+    return 'Uw geboortedatum mag niet ouder zijn dan 100 jaaren.';
+  }
+  if (moment(formateValue).isAfter(todayDate)) {
+    return 'Uw geboortedatum is niet geldig.';
   }
   return true;
 });
@@ -188,19 +181,31 @@ export default class MyCarForm extends Vue {
   thereAnyCar = false;
   modelTest = '';
 
-  mileageOptions = mileageOptions;
-  selectedMileage: IDropdownOption = mileageOptions[1];
+  // Create array of option which contains only value of mileage
+  mileage = mileageOptions.map((option) => option.value);
+  selectedMileage: string = this.mileage[1];
 
-  maxClaimYears = 0;
   claimOptions: string[] = ['-5', '-4', '-3', '-2', '-1', '0'];
   selectedClaimYear: string = this.claimOptions[5];
 
-  onInputTest() : void {
-    console.log('modelTest', this.modelTest);
+  setMileageOption(option: string): void {
+    this.selectedMileage = option;
   }
 
-  onSubmitForm(formData: object) : void {
-    console.log({ formData });
+  setSelectedClaimYear(option: string): void {
+    this.selectedClaimYear = option;
+  }
+
+  setClaimFreeYearsOptions(value: string) : void {
+    const currentYear = moment(new Date()).year();
+    const birthYear = moment(value).year();
+    const maxValue = currentYear - birthYear - 18;
+    if (maxValue > 0) {
+      // Add options of claim year.
+      for (let i = 1; i <= maxValue; i++) {
+        this.claimOptions.push(i.toString());
+      }
+    }
   }
 
   async searchCar(valueField: string): Promise<AllVehicleData | undefined> {
@@ -215,46 +220,10 @@ export default class MyCarForm extends Vue {
     return carRes;
   }
 
-  setMileageOption(option: IDropdownOption): void {
-    this.selectedMileage = option;
+  async onSubmitForm(formData: IFormDataSubmitForm) : Promise<void> {
+    console.log(formData);
+    await sendDataAsQueryParamsUrl(formData);
   }
-
-  setClaimFreeYears(value: string) : void {
-    const currentYear = moment(new Date()).year();
-    const birthYear = moment(value).year();
-    const maxValue = currentYear - birthYear - 18;
-    if (maxValue > 0) {
-      this.maxClaimYears = maxValue;
-      for (let i = 1; i <= maxValue; i++) {
-        this.claimOptions.push(i.toString());
-      }
-    }
-  }
-
-  setSelectedClaimYear(option: string): void {
-    this.selectedClaimYear = option;
-  }
-
-  // async findCar(valueField: string) : Promise<Vehicle[] | undefined> {
-  //   console.log(valueField);
-  //   const carRes = await fetchVehicle(valueField);
-  //   console.log(carRes)
-  //   return carRes;
-  // }
-
-  /** Setup */
-  // myCarForm = setup(() => {
-  //   const counter = ref(0);
-
-  //   function increment() {
-  //     counter.value = counter.value + 1;
-  //   }
-
-  //   return {
-  //     counter,
-  //     increment,
-  //   };
-  // })
 }
 </script>
 

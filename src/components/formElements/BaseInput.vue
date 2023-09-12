@@ -11,7 +11,6 @@
       :max="max"
       :type="type"
       class="input-field input-wrapper"
-      @input="onInput"
       :label="labelField"
     />
     <ErrorMessage :name="fieldName" class="error-text"/>
@@ -88,24 +87,6 @@ export default class BaseInput extends Vue implements IBaseInput {
     this.inputValue = this.inputValue.trim().replace(/[^A-Z0-9]/ig, '').toUpperCase();
     return input.trim().replace(/[^A-Z0-9]/ig, '').toUpperCase();
   }
-
-  onInput(): void {
-    console.log('onInput', this.inputValue);
-  }
-
-  /** Setup */
-  // myCarForm = setup(() => {
-  //   const counter = ref(0);
-
-  //   function increment() {
-  //     counter.value = counter.value + 1;
-  //   }
-
-  //   return {
-  //     counter,
-  //     increment,
-  //   };
-  // })
 }
 </script>
 

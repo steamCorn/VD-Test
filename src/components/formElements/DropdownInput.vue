@@ -9,22 +9,9 @@
       :rules="rules"
       class="input-field"
     >
-      <!-- <option
-        v-for="(option, index) in optionList"
-        v-bind="field"
-        :key="option.id"
-        :value="option.id ? option.id : option"
-        :selected="selectedOption?.value ? selectedOption.value : selectedOption"
-        @select="$emit('on-select', option)"
-        @click="selectOption(option)"
-        class="menu-option"
-      >
-        {{ option.value || option }}
-      </option> -->
       <div class="position-menu">
-        <pre>{{ getSelectedOption }}</pre>
         <div class="input-field dropdown-input" @click="toggleDropdown">
-          {{ getSelectedOption }}
+          {{ selectedOption }}
           <img
             src="../../assets/img/icons/expand_more.svg"
             alt="Search black icon"
@@ -40,10 +27,9 @@
             class="menu-option"
             @click="() => selectOption(option)"
           >
-            {{ option.value ? option.value : option }}
+            {{  option }}
           </div>
         </div>
-        <pre>{{ optionList }}</pre>
       </div>
     </Field>
   </div>
@@ -56,7 +42,6 @@ import { Options, Vue } from 'vue-class-component';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 /** Interface */
 import IDropdownInput from '../../interfaces/IDropdownInput';
-import IDropdownOption from '../../interfaces/IDropdownOption';
 
 @Options({
   components: {
@@ -91,11 +76,15 @@ import IDropdownOption from '../../interfaces/IDropdownOption';
       type: String,
       require: false,
     },
+    isScrolled: {
+      type: Boolean,
+      require: false,
+      default: false,
+    },
   },
   emits: ['on-select'],
   watch: {
     selectedOption(newVal) {
-      console.log(newVal)
       this.selectedElement = newVal;
     },
   },
@@ -104,33 +93,23 @@ export default class DropdownInput extends Vue implements IDropdownInput {
   fieldTitle!: string;
   fieldName!: string;
   placeholder: string | undefined;
-  optionList!: IDropdownOption[];
-  selectedOption!: IDropdownOption;
+  optionList!: string[];
+  selectedOption!: string;
   rules!: string;
 
   isDropdownShown = false;
-  selectedElement: IDropdownOption = { id: 0, value: '' };
+  selectedElement = '';
 
-  // valueInput(value: IDropdownOption): string {
-  //   console.log('valueInput', value)
-  //   // console.log('props', this.selectedOption?.value)
-  //   if (this.selectedOption?.value) {
-  //     this.selectedElement = this.selectedOption
-  //   }
-  //   return value.value;
-  // }
-  get getSelectedOption(): string {
-    if (this.selectedOption?.value) {
-      this.selectedElement = this.selectedOption;
-    }
-    return this.selectedElement.value;
+  mounted() : void {
+    // Set selected option on onMount component.
+    this.selectedElement = this.selectedOption;
   }
 
   toggleDropdown() : void {
     this.isDropdownShown = !this.isDropdownShown;
   }
 
-  selectOption(value: IDropdownOption): void {
+  selectOption(value: string): void {
     this.selectedElement = value;
     this.$emit('on-select', value);
     this.isDropdownShown = false;
