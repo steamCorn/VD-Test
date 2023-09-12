@@ -3,12 +3,11 @@
     <div v-if="isDropdownShown" class="status-mask" @click="toggleDropdown" />
     <label :for="fieldName" class="input-title">{{ fieldTitle }}</label>
     <Field
-      v-slot="{ field }"
       :name="fieldName"
       v-model="selectedElement"
       :placeholder="placeholder"
       :rules="rules"
-      class="input-field dropdown-menu"
+      class="input-field"
     >
       <!-- <option
         v-for="(option, index) in optionList"
@@ -22,28 +21,31 @@
       >
         {{ option.value || option }}
       </option> -->
-      <div class="input-field dropdown-input" @click="toggleDropdown">
-        {{ getSelectedOption }}
-        <img
-          src="../../assets/img/icons/expand_more.svg"
-          alt="Search black icon"
-          class="dropdown-icon"
-          :class="{'rotate-icon' : isDropdownShown}"
-        >
-      </div>
-
-      <div v-show="isDropdownShown" class="dropdown-menu">
-        <div
-          v-for="(option, index) in optionList"
-          :key="index"
-          class="menu-option"
-          @click="() => selectOption(option)"
-        >
-          {{ option.value }}
+      <div class="position-menu">
+        <pre>{{ getSelectedOption }}</pre>
+        <div class="input-field dropdown-input" @click="toggleDropdown">
+          {{ getSelectedOption }}
+          <img
+            src="../../assets/img/icons/expand_more.svg"
+            alt="Search black icon"
+            class="dropdown-icon"
+            :class="{'rotate-icon' : isDropdownShown}"
+          >
         </div>
+        <!-- Dropdown menu -->
+        <div class="dropdown-menu" :class="{'show-menu' : isDropdownShown}">
+          <div
+            v-for="(option, index) in optionList"
+            :key="index"
+            class="menu-option"
+            @click="() => selectOption(option)"
+          >
+            {{ option.value ? option.value : option }}
+          </div>
+        </div>
+        <pre>{{ optionList }}</pre>
       </div>
     </Field>
-    <!-- <pre>{{ selectedElement }}</pre> -->
   </div>
 </template>
 
@@ -83,7 +85,7 @@ import IDropdownOption from '../../interfaces/IDropdownOption';
     },
     selectedOption: {
       type: [Object, String],
-      require: false,
+      require: true,
     },
     rules: {
       type: String,
@@ -93,6 +95,7 @@ import IDropdownOption from '../../interfaces/IDropdownOption';
   emits: ['on-select'],
   watch: {
     selectedOption(newVal) {
+      console.log(newVal)
       this.selectedElement = newVal;
     },
   },
@@ -102,7 +105,7 @@ export default class DropdownInput extends Vue implements IDropdownInput {
   fieldName!: string;
   placeholder: string | undefined;
   optionList!: IDropdownOption[];
-  selectedOption!: IDropdownOption | undefined;
+  selectedOption!: IDropdownOption;
   rules!: string;
 
   isDropdownShown = false;
@@ -117,7 +120,6 @@ export default class DropdownInput extends Vue implements IDropdownInput {
   //   return value.value;
   // }
   get getSelectedOption(): string {
-    // console.log('props', this.selectedOption?.value)
     if (this.selectedOption?.value) {
       this.selectedElement = this.selectedOption;
     }
@@ -146,6 +148,10 @@ export default class DropdownInput extends Vue implements IDropdownInput {
   z-index: 1;
 }
 
+.position-menu {
+  position: relative;
+}
+
 .dropdown-input {
   display: flex;
   align-items: center;
@@ -157,21 +163,44 @@ export default class DropdownInput extends Vue implements IDropdownInput {
 }
 
 .dropdown-menu {
-  padding: 5px 10px;
+  height: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 45px;
+  left: 0;
+  right: 0;
   border-radius: 10px;
-  border: 1px solid gray;
+  padding: 0 10px;
+  border: 0 solid rgb(255, 255, 255);
   z-index: 5;
   background-color: rgb(255, 255, 255);
   font-size: 13px;
-  transition: all .5s ease-in-out;
+  transition-duration: .2s, 0s;
+  transition-delay: 0s, .2s;
+}
+
+.show-menu {
+  height: 252px;
+  padding: 5px 10px;
+  border: 1px solid gray;
 }
 
 .menu-option {
   height: 30px;
   padding: 7px 30px;
-  transition: 0.3s;
   background-color: rgb(255, 255, 255);
   cursor: pointer;
+  visibility: hidden;
+  opacity: 0;
+  transition-property: opacity, visibility;
+  transition-duration: .3s, 0s;
+  transition-delay: 0s, .3s;
+}
+
+.show-menu .menu-option  {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s, 0s;
 }
 
 .menu-option:hover {
@@ -180,19 +209,12 @@ export default class DropdownInput extends Vue implements IDropdownInput {
 
 .dropdown-icon {
   opacity: 0.5;
-  /* transform: rotate(0); */
   rotate: 0deg;
   transition: rotate .7s ease;
 }
 
 .rotate-icon {
-  /* transform: rotate(180deg); */
   rotate: 180deg;
   transition: rotate .7s ease;
 }
-
-/* .input-dropdown-wrapper .dropdown-menu option {
-  background-color: rgb(231, 230, 232);
-  font-size: 14px;
-} */
 </style>

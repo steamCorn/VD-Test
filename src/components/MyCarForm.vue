@@ -50,29 +50,28 @@
       />
 
       <!-- Mileage -->
-      <DropdownInput
+      <!-- <DropdownInput
         fieldName="mileage"
         :fieldTitle="'Mileage'"
         :placeholder="'Select option'"
-        :rules="'required|mileage'"
         :option-list="mileageOptions"
         :selected-option="selectedMileage"
         @on-select="setMileageOption"
-      />
-
-      <pre>{{ selectedMileage }}</pre>
+      /> -->
+        <!-- :rules="'required|mileage'" -->
 
       <!-- Claim Free years -->
-      <!-- <DropdownInput
+      <DropdownInput
         fieldName="claimYear"
         :fieldTitle="'Claim Free years'"
         :placeholder="'Select option'"
+        :rules="'required|mileage'"
         :option-list="claimOptions"
-        :selected-option="claimOptions[4]"
-        @on-select="setMileageOption"
-      /> -->
+        :selected-option="selectedClaimYear"
+        @on-select="setSelectedClaimYear"
+      />
 
-      <!-- <pre>{{ claimOptions[4] }}</pre> -->
+      <pre>{{ selectedClaimYear }}</pre>
 
       <button class="submit-button" type="submit">Ok</button>
     </Form>
@@ -194,6 +193,7 @@ export default class MyCarForm extends Vue {
 
   maxClaimYears = 0;
   claimOptions: string[] = ['-5', '-4', '-3', '-2', '-1', '0'];
+  selectedClaimYear: string = this.claimOptions[5];
 
   onInputTest() : void {
     console.log('modelTest', this.modelTest);
@@ -229,6 +229,10 @@ export default class MyCarForm extends Vue {
         this.claimOptions.push(i.toString());
       }
     }
+  }
+
+  setSelectedClaimYear(option: string): void {
+    this.selectedClaimYear = option;
   }
 
   // async findCar(valueField: string) : Promise<Vehicle[] | undefined> {

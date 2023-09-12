@@ -5,5 +5,5 @@ export default interface IDropdownInput {
   fieldName: string;
   placeholder: string | undefined;
   optionList: Array<IDropdownOption>;
-  selectedOption: IDropdownOption | undefined;
+  selectedOption: IDropdownOption;
 };
