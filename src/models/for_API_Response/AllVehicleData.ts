@@ -259,8 +259,4 @@ export default class AllVehicleData {
   //   const { kenteken, merk, datum_eerste_toelating } = 
   // }
 
-  // get formData(): { name: string, ingredients: string, steps: string } {
-  //   const { name, ingredients, steps } = this.recipe;
-  //   return { name, ingredients, steps };
-  // }
 }

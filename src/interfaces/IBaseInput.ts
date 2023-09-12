@@ -1,4 +1,3 @@
-/* eslint-disable semi */
 export default interface IBaseInput {
   fieldTitle: string;
   fieldName: string;
@@ -8,4 +7,4 @@ export default interface IBaseInput {
   maxlength: number | undefined;
   max: number | undefined;
   labelField: string | undefined;
-}
+};
