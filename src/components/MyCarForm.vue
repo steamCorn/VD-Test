@@ -1,83 +1,86 @@
 <template>
   <div class="form-wrapper">
-    <Form @submit="onSubmitForm">
+    <Form @submit="onSubmitForm" class="form-content">
       <!-- License plate -->
       <SearchInput
         fieldName="license"
-        fieldTitle="License plate"
-        :placeholder="'Enter your license plate as XXXXXX'"
-        :rules="'required|minLength:6'"
-        @on-fetch="searchCar"
-        :labelField="'License plate'"
+        fieldTitle="Kenteken"
+        placeholder="Vul uw kenteken in"
+        :rules="'required|license:6'"
+        @on-search="searchVehicle"
+        labelField="Kenteken"
       />
+<!-- <pre>{{ thereAnyCar }}</pre> -->
+<!-- HB432B -->
+<!-- GB184B -->
+
+      <div v-if="carData.merk && !thereAnyCar" class="information-cart">
+        {{ `${carData.merk} ${getYear(carData.datum_eerste_toelating)}` }}
+      </div>
+
       <!-- Postcode -->
       <BaseInput
         fieldName="zipcode"
-        :fieldTitle="'Zipcode'"
+        fieldTitle="Postcode"
         :rules="'required|length:6|postcode'"
         :maxlength="6"
-        :placeholder="'Enter your postcode'"
-        :labelField="'Zipcode'"
+        placeholder="Vul uw postcode in"
+        labelField="Postcode"
       />
-      <!-- House number -->
-      <BaseInput
-        fieldName="houseNumber"
-        :fieldTitle="'House number'"
-        :rules="'required|numeric'"
-        :maxlength="5"
-        :placeholder="'Enter your house number'"
-        :labelField="'House number'"
-      />
-      <!-- House number addition -->
-      <BaseInput
-        field-name="houseAddition"
-        :field-title="'House number addition'"
-        :maxlength="3"
-        :rules="'numberAddition'"
-        :placeholder="'Enter your house number addition'"
-        :labelField="'House number addition'"
-      />
+
+      <div class="flex-row">
+        <!-- House number -->
+        <BaseInput
+          fieldName="houseNumber"
+          fieldTitle="Huisnummer"
+          :rules="'required|numeric'"
+          :maxlength="5"
+          labelField="Huisnummer"
+        />
+        <!-- House number addition -->
+        <BaseInput
+          field-name="houseAddition"
+          field-title="Toevoeging"
+          :maxlength="3"
+          :rules="'numberAddition'"
+          labelField="Toevoeging"
+        />
+      </div>
+
       <!-- Birthday field -->
       <DateInput
         field-name="birthDate"
-        :field-title="'Birth date'"
+        field-title="Geboortedatum"
         rules="required|birthDate"
-        :labelField="'Birth date'"
+        labelField="Geboortedatum"
         @select-date="setClaimFreeYearsOptions"
       />
+
       <!-- Mileage -->
       <DropdownInput
         fieldName="mileage"
-        :fieldTitle="'Mileage'"
+        fieldTitle="Kilometerstand"
         :rules="'required'"
         :placeholder="'Select option'"
         :option-list="mileage"
         :selected-option="selectedMileage"
         @on-select="setMileageOption"
       />
+
       <!-- Claim Free years -->
       <DropdownInput
         fieldName="claimYear"
-        :fieldTitle="'Claim Free years'"
+        fieldTitle="Claim gratis jaren"
         :rules="'required'"
         :placeholder="'Select option'"
         :option-list="claimOptions"
+        :isScrollable="true"
         :selected-option="selectedClaimYear"
         @on-select="setSelectedClaimYear"
       />
 
       <button class="submit-button" type="submit">Ok</button>
     </Form>
-
-    <div>
-      <h2 v-if="thereAnyCar">There no such car</h2>
-      <div v-else>
-        <h1>{{ carData.kenteken }}</h1>
-        <h2>{{ carData.merk }}</h2>
-        <h2>{{ carData.datum_eerste_toelating }}</h2>
-        <h4>{{ carData.eerste_kleur }}</h4>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -97,7 +100,6 @@ import DateInput from './formElements/DateInput.vue';
 /** Interface and modals */
 import { VehicleNL } from '../interfaces/Vehicle';
 import AllVehicleData from '../models/for_API_Response/AllVehicleData';
-import IFormDataSubmitForm from '../interfaces/IFormDataSubmitForm';
 /** Constants */
 import mileageOptions from '../constants/mileageOptions';
 /** API */
@@ -107,9 +109,13 @@ defineRule('required', required);
 defineRule('length', length);
 defineRule('numeric', numeric);
 
-defineRule('minLength', (value: string, [limit]:[number]) => {
+defineRule('license', (value: string, [limit]:[number], field) => {
+  const licensePattern = /^[A-Za-z]{2}\d{3}[A-Za-z]{1}$/;
   if (value.length < limit || value.length > limit) {
     return `Dit veld moet uit ${limit} tekens bestaan.`;
+  }
+  if (!licensePattern.test(value)) {
+    return `${field.label} is niet geldig.`;
   }
   return true;
 });
@@ -138,24 +144,15 @@ defineRule('numberAddition', (value: string) => {
 });
 
 defineRule('birthDate', (value: string) => {
-  console.log(value)
   const todayDate = moment(new Date());
   const minDate = moment().subtract(100, 'years');
   const formateValue = new Date(value);
-  // if (value === 'Invalid date') {
-  //   return 'Dit veld is verplicht.';
-  // }
   if (moment(formateValue).isBefore(minDate)) {
     return 'Uw geboortedatum mag niet ouder zijn dan 100 jaaren.';
   }
   if (moment(formateValue).isAfter(todayDate)) {
     return 'Uw geboortedatum is niet geldig.';
   }
-  return true;
-});
-
-defineRule('mileage', (value: string) => {
-  console.log('mileage', value)
   return true;
 });
 
@@ -173,10 +170,8 @@ defineRule('mileage', (value: string) => {
 })
 export default class MyCarForm extends Vue {
   carData: VehicleNL = {
-    kenteken: '',
     merk: '',
     datum_eerste_toelating: '',
-    eerste_kleur: '',
   };
   thereAnyCar = false;
   modelTest = '';
@@ -208,7 +203,16 @@ export default class MyCarForm extends Vue {
     }
   }
 
-  async searchCar(valueField: string): Promise<AllVehicleData | undefined> {
+  getYear(value: string) : string {
+    return value.substring(0, 4);
+  }
+
+  async searchVehicle(valueField: string): Promise<AllVehicleData | undefined> {
+    if (!valueField.length || valueField.length < 6) {
+      this.thereAnyCar = true;
+      return;
+    }
+    console.log(valueField)
     const carRes = await fetchVehicle(valueField);
     console.log('carRes', carRes);
     if (carRes !== undefined) {
@@ -220,7 +224,7 @@ export default class MyCarForm extends Vue {
     return carRes;
   }
 
-  async onSubmitForm(formData: IFormDataSubmitForm) : Promise<void> {
+  async onSubmitForm(formData: string[][]) : Promise<void> {
     console.log(formData);
     await sendDataAsQueryParamsUrl(formData);
   }
@@ -234,12 +238,36 @@ export default class MyCarForm extends Vue {
   background-color: beige;
 }
 
+.form-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.information-cart {
+  font-size: 16px;
+  background-color: rgb(233 233 233);
+  box-shadow: inset -1px 3px 7px 13px #e2e0e0;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+}
+
+.flex-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flex-row .base-input-wrapper {
+  width: 45%;
+}
+
 .form-wrapper .input-field {
   height: 40px;
   width: 100%;
   border: 1px solid gray;
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 0 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .form-wrapper .input-field:focus,
@@ -253,7 +281,7 @@ export default class MyCarForm extends Vue {
   height: 40px;
   width: 100%;
   border: 1px solid rgb(67, 245, 72);
-  border-radius: 10px;
+  border-radius: 4px;
   margin-top: 20px;
   cursor: pointer;
 }

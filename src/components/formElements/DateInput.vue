@@ -104,11 +104,6 @@ export default class DateInput extends Vue implements IDatepicker {
     return number < 10 ? `0${number}` : number;
     // return number < 10 ? number.toString().padStart(2, '0') : number;
   }
-
-  // TODO: delete it
-  // get birthDate() : string {
-  //   return moment(this.selectedDate).format('YYYY-MM-DD');
-  // }
 }
 </script>
 

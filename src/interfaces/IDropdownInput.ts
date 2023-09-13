@@ -4,4 +4,5 @@ export default interface IDropdownInput {
   placeholder: string | undefined;
   optionList: string[];
   selectedOption: string;
+  isScrollable: boolean;
 };

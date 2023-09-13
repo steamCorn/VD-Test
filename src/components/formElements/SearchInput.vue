@@ -8,18 +8,31 @@
       v-slot="{ value, handleChange }"
       :label="labelField"
     >
-      <div class="input-wrapper">
+    <div class="input-wrapper">
+
+      <div class="input-content" >
         <input
           :placeholder="placeholder"
           :value="replaceCharacters(value)"
           type="text"
-          @blur="handleChange"
+          maxlength="6"
+          @blur="searchValue"
           @change="handleChange"
-          @keyup.enter="searchValue"
+          @input="handleChange"
           class="input-field license-field"
-        />
+        >
 
         <!-- Icon -->
+        <!-- <img
+          src="../../assets/img/icons/ic_search.svg"
+          alt="Delete icon"
+          class="input-icon"
+          :class="{'opacity-icon' : valueField.length !== 6}"
+          @click="cleanField"
+        > -->
+      </div>
+      <!-- Search button -->
+      <!-- <div class="search-button">
         <img
           src="../../assets/img/icons/ic_search.svg"
           alt="Search black icon"
@@ -27,7 +40,8 @@
           :class="{'opacity-icon' : valueField.length !== 6}"
           @click="searchValue"
         >
-      </div>
+      </div> -->
+    </div>
     </Field>
     <ErrorMessage :name="fieldName" class="error-text"/>
   </div>
@@ -69,7 +83,7 @@ import ISearchInput from '../../interfaces/ISearchInput';
       require: false,
     },
   },
-  emits: ['on-fetch'],
+  emits: ['on-search'],
 })
 export default class SearchInput extends Vue implements ISearchInput {
   fieldTitle!: string;
@@ -86,14 +100,12 @@ export default class SearchInput extends Vue implements ISearchInput {
   }
 
   searchValue() : void {
-    if (!this.valueField.length || this.valueField.length !== 6) {
-      return;
-    }
-    this.$emit('on-fetch', this.valueField);
+    this.$emit('on-search', this.valueField);
   }
 
-  onInput(searchText: string) : void {
-    console.log('searchText', searchText);
+  cleanField() : void {
+    this.valueField = '';
+    this.$emit('on-search', this.valueField);
   }
 }
 </script>
@@ -102,13 +114,32 @@ export default class SearchInput extends Vue implements ISearchInput {
 .input-wrapper {
   position: relative;
   display: flex;
+  gap: 15px;
 }
 
-.input-wrapper .input-icon {
+.input-content {
+  width: 100%;
+}
+
+.search-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 40px;
+  background-color: rgb(115, 134, 197);
+  border-radius: 4px;
+  cursor: pointer
+}
+
+/* .search-button .input-icon {
   position: absolute;
   right: 16px;
   top: 8px;
-  cursor: pointer;
+} */
+
+.search-button:hover {
+  background-color: rgb(160, 173, 215);
 }
 
 .opacity-icon {

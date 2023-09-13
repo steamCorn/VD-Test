@@ -20,7 +20,10 @@
           >
         </div>
         <!-- Dropdown menu -->
-        <div class="dropdown-menu" :class="{'show-menu' : isDropdownShown}">
+        <div
+          class="dropdown-menu"
+          :class="{'show-menu' : isDropdownShown, 'scrolled' : isScrollable }"
+        >
           <div
             v-for="(option, index) in optionList"
             :key="index"
@@ -76,7 +79,7 @@ import IDropdownInput from '../../interfaces/IDropdownInput';
       type: String,
       require: false,
     },
-    isScrolled: {
+    isScrollable: {
       type: Boolean,
       require: false,
       default: false,
@@ -96,6 +99,7 @@ export default class DropdownInput extends Vue implements IDropdownInput {
   optionList!: string[];
   selectedOption!: string;
   rules!: string;
+  isScrollable!: boolean;
 
   isDropdownShown = false;
   selectedElement = '';
@@ -148,7 +152,7 @@ export default class DropdownInput extends Vue implements IDropdownInput {
   top: 45px;
   left: 0;
   right: 0;
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 0 10px;
   border: 0 solid rgb(255, 255, 255);
   z-index: 5;
@@ -162,6 +166,20 @@ export default class DropdownInput extends Vue implements IDropdownInput {
   height: 252px;
   padding: 5px 10px;
   border: 1px solid gray;
+}
+
+.dropdown-menu.show-menu.scrolled {
+  height: 150px;
+  overflow-y: auto;
+}
+
+.scrolled {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer and Edge */
+}
+
+.scrolled::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
 }
 
 .menu-option {
