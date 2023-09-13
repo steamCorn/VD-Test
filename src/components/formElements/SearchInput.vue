@@ -103,10 +103,11 @@ export default class SearchInput extends Vue implements ISearchInput {
     this.$emit('on-search', this.valueField);
   }
 
-  cleanField() : void {
-    this.valueField = '';
-    this.$emit('on-search', this.valueField);
-  }
+  // TODO: delete
+  // cleanField() : void {
+  //   this.valueField = '';
+  //   this.$emit('on-search', this.valueField);
+  // }
 }
 </script>
 

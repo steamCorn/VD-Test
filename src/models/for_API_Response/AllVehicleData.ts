@@ -239,24 +239,4 @@ export default class AllVehicleData {
     this.wielbasis = wielbasis;
     this.zuinigheidsclassificatie = zuinigheidsclassificatie;
   }
-
-  // get vehicle(): Vehicle {
-  //   return {
-  //     licensePlate: this.kenteken,
-  //     mark: this.merk,
-  //     manufacturingYear: this.datum_eerste_toelating,
-  //   };
-  // }
-
-  // get vehicleData(): {
-  //   kenteken: string, merk: string, datum_eerste_toelating: string
-  // } {
-  //   // return {
-  //   //   licensePlate: this.kenteken,
-  //   //   mark: this.merk,
-  //   //   manufacturingYear: this.datum_eerste_toelating,
-  //   // };
-  //   const { kenteken, merk, datum_eerste_toelating } = 
-  // }
-
 }

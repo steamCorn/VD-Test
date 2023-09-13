@@ -18,7 +18,7 @@ export async function sendDataAsQueryParamsUrl(formData: string[][]): Promise<vo
     const searchParams = new URLSearchParams(formData).toString();
     const response = await fetch(`api-url${searchParams}`);
 
-    console.log(response);
+    console.log(response.url);
   } catch (error) {
     console.log(error);
   }

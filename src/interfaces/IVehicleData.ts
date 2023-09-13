@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-export interface VehicleData {
+export interface IVehicleData {
   aantal_cilinders: string;
   aantal_deuren: string;
   aantal_rolstoelplaatsen: string;
