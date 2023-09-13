@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-test="app">
     <car-form />
   </div>
 </template>

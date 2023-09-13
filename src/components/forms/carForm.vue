@@ -18,11 +18,11 @@
             {{ `${carData.merk} ${getYear(carData.datum_eerste_toelating)}` }}
           </div>
 
-          <!-- Postcode -->
+          <!-- Zip code -->
           <BaseInput
             fieldName="zipcode"
             fieldTitle="Postcode"
-            :rules="'required|length:6|postcode'"
+            :rules="'required|length:6|zipCode'"
             :maxlength="6"
             placeholder="Vul uw postcode in"
             labelField="Postcode"
@@ -102,7 +102,6 @@ import DropdownInput from '../formElements/DropdownInput.vue';
 import DateInput from '../formElements/DateInput.vue';
 /** Interface and modals */
 import IVehicleNL from '../../interfaces/IVehicleNL';
-import AllVehicleData from '../../models/for_API_Response/AllVehicleData';
 /** Constants */
 import mileageOptions from '../../constants/mileageOptions';
 /** API */
@@ -113,17 +112,18 @@ defineRule('length', length);
 defineRule('numeric', numeric);
 
 defineRule('license', (value: string, [limit]:[number], field) => {
-  const licensePattern = /^[A-Za-z]{2}\d{3}[A-Za-z]{1}$/;
+  const licensePatternOne = /^[A-Z]{1}\d{3}[A-Z]{2}$/;
+  const licensePatternTwo = /^[A-Z]{2}\d{3}[A-Z]{1}$/;
   if (value.length < limit || value.length > limit) {
     return `Dit veld moet uit ${limit} tekens bestaan.`;
   }
-  if (!licensePattern.test(value)) {
+  if (!licensePatternOne.test(value) && !licensePatternTwo.test(value)) {
     return `${field.label} is niet geldig.`;
   }
   return true;
 });
 
-defineRule('postcode', (value: string) => {
+defineRule('zipCode', (value: string) => {
   const postcodePattern = /^\d{4}[A-Za-z]{2}$/;
   if (!value || !value.length) {
     return 'Dit veld is verplicht.';
@@ -211,30 +211,27 @@ export default class CarForm extends Vue {
     return value.substring(0, 4);
   }
 
-  async searchVehicle(valueField: string): Promise<AllVehicleData | undefined> {
+  async searchVehicle(valueField: string): Promise<void> {
     if (!valueField.length || valueField.length < 6) {
       this.thereAnyCar = true;
       return;
     }
-    console.log(valueField)
     const carRes = await fetchVehicle(valueField);
-    console.log('carRes', carRes);
     if (carRes !== undefined) {
       this.carData = { ...carRes } as IVehicleNL;
       this.thereAnyCar = false;
     } else {
       this.thereAnyCar = true;
+      this.carData = {
+        merk: '',
+        datum_eerste_toelating: '',
+      };
     }
-    return carRes;
   }
 
   async onSubmitForm(formData: string[][]) : Promise<void> {
     console.log(formData);
     await sendDataAsQueryParamsUrl(formData);
-  }
-
-  onSubmit(): void {
-    console.log('Button is clicked');
   }
 }
 </script>
@@ -248,7 +245,6 @@ export default class CarForm extends Vue {
   width: 90%;
   min-width: 260px;
   margin: 50px auto;
-  background-color: beige;
 }
 
 .form-content {
@@ -261,7 +257,7 @@ export default class CarForm extends Vue {
   background-color: rgb(233 233 233);
   box-shadow: inset -1px 3px 7px 13px #e2e0e0;
   padding: 10px 20px;
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
 
 .flex-row {
@@ -324,7 +320,7 @@ export default class CarForm extends Vue {
 @media only screen and (min-width: 768px) {
   .vd-form {
     width: 430px;
-    margin: auto;
+    margin: 100px auto;
   }
 }
 
