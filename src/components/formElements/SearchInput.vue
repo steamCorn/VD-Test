@@ -21,15 +21,6 @@
           @input="handleChange"
           class="input-field license-field"
         >
-
-        <!-- Icon -->
-        <!-- <img
-          src="../../assets/img/icons/ic_search.svg"
-          alt="Delete icon"
-          class="input-icon"
-          :class="{'opacity-icon' : valueField.length !== 6}"
-          @click="cleanField"
-        > -->
       </div>
       <!-- Search button -->
       <!-- <div class="search-button">
@@ -102,12 +93,6 @@ export default class SearchInput extends Vue implements ISearchInput {
   searchValue() : void {
     this.$emit('on-search', this.valueField);
   }
-
-  // TODO: delete
-  // cleanField() : void {
-  //   this.valueField = '';
-  //   this.$emit('on-search', this.valueField);
-  // }
 }
 </script>
 

@@ -22,16 +22,19 @@
         <!-- Dropdown menu -->
         <div
           class="dropdown-menu"
-          :class="{'show-menu' : isDropdownShown, 'scrolled' : isScrollable }"
+          :class="{'show-menu' : isDropdownShown }"
         >
-          <div
-            v-for="(option, index) in optionList"
-            :key="index"
-            class="menu-option"
-            @click="() => selectOption(option)"
-          >
-            {{  option }}
-          </div>
+          <div :class="{'scrolled' : isScrollable }">
+            <div
+              v-for="(option, index) in optionList"
+              :key="index"
+              class="menu-option"
+              @click="() => selectOption(option)"
+              data-test="dropdown-option"
+            >
+              {{  option }}
+            </div>
+        </div>
         </div>
       </div>
     </Field>
@@ -42,15 +45,13 @@
 /** Vue */
 import { Options, Vue } from 'vue-class-component';
 /** Validation */
-import { Form, Field, ErrorMessage } from 'vee-validate';
+import { Field } from 'vee-validate';
 /** Interface */
 import IDropdownInput from '../../interfaces/IDropdownInput';
 
 @Options({
   components: {
-    Form,
     Field,
-    ErrorMessage,
   },
   props: {
     fieldTitle: {
@@ -105,7 +106,6 @@ export default class DropdownInput extends Vue implements IDropdownInput {
   selectedElement = '';
 
   mounted() : void {
-    // Set selected option on onMount component.
     this.selectedElement = this.selectedOption;
   }
 
@@ -168,18 +168,29 @@ export default class DropdownInput extends Vue implements IDropdownInput {
   border: 1px solid gray;
 }
 
-.dropdown-menu.show-menu.scrolled {
+.show-menu:has(.scrolled) {
   height: 150px;
-  overflow-y: auto;
 }
 
 .scrolled {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer and Edge */
+  height: 140px;
+  overflow-y: auto;
+  padding: 5px 0;
+  scrollbar-width: 3px;
 }
 
 .scrolled::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, and Opera */
+  width: 3px;
+  background-color: rgb(169, 169, 169);
+}
+
+.scrolled::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: rgb(169, 169, 169);
+}
+
+.scrolled::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
 }
 
 .menu-option {

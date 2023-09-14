@@ -246,12 +246,9 @@ export default class CarForm extends Vue {
   }
 
   async onSubmitForm(formData: IFormSubmit) : Promise<void> {
-    // const newFomData = { ...formData };
-    // newFomData.birthDate = moment(newFomData.birthDate).format('YYYY-MM-DD');
-    // await sendDataAsQueryParamsUrl(newFomData);
-
-    formData.birthDate = moment(formData.birthDate).format('YYYY-MM-DD');
-    await sendDataAsQueryParamsUrl(formData);
+    const newFomData = { ...formData };
+    newFomData.birthDate = moment(newFomData.birthDate).format('YYYY-MM-DD');
+    await sendDataAsQueryParamsUrl(newFomData);
   }
 }
 </script>

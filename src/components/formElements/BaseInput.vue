@@ -1,6 +1,6 @@
 <template>
   <div class="base-input-wrapper">
-    <label :for="fieldName" class="input-title">{{ fieldTitle }}</label>
+    <label :for="fieldName" class="input-title" data-test="input-title">{{ fieldTitle }}</label>
     <Field
       :name="fieldName"
       :placeholder="placeholder"
@@ -10,10 +10,10 @@
       :maxlength="maxlength"
       :max="max"
       :type="type"
-      class="input-field input-wrapper"
       :label="labelField"
+      class="input-field input-wrapper"
     />
-    <ErrorMessage :name="fieldName" class="error-text"/>
+    <ErrorMessage :name="fieldName" class="error-text" data-test="input-error"/>
   </div>
 </template>
 
