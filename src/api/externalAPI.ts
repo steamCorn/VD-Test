@@ -1,4 +1,5 @@
 import AllVehicleData from '../models/for_API_Response/AllVehicleData';
+import IFormSubmit from '../interfaces/IFormSubmit';
 
 const URL = 'https://opendata.rdw.nl/resource/m9d7-ebf2.json?kenteken=';
 
@@ -13,9 +14,10 @@ export async function fetchVehicle(license: string): Promise<AllVehicleData | un
   }
 }
 
-export async function sendDataAsQueryParamsUrl(formData: string[][]): Promise<void> {
+export async function sendDataAsQueryParamsUrl(formData: IFormSubmit): Promise<void> {
+  const formDataJSON = JSON.stringify(formData);
   try {
-    const searchParams = new URLSearchParams(formData).toString();
+    const searchParams = new URLSearchParams(formDataJSON).toString();
     const response = await fetch(`api-url${searchParams}`);
 
     console.log(response.url);

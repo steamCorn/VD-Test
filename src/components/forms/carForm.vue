@@ -15,12 +15,12 @@
           />
 
           <div v-if="carData.merk && !thereAnyCar" class="information-cart">
-            {{ `${carData.merk} ${getYear(carData.datum_eerste_toelating)}` }}
+            {{ `${carData.merk} ${getOnlyYear(carData.datum_eerste_toelating)}` }}
           </div>
 
           <!-- Zip code -->
           <BaseInput
-            fieldName="zipcode"
+            fieldName="zipCode"
             fieldTitle="Postcode"
             :rules="'required|length:6|zipCode'"
             :maxlength="6"
@@ -53,7 +53,7 @@
             field-title="Geboortedatum"
             rules="required|birthDate"
             labelField="Geboortedatum"
-            @select-date="setClaimFreeYearsOptions"
+            @select-date="updateYear"
           />
 
           <!-- Claim Free years -->
@@ -102,6 +102,7 @@ import DropdownInput from '../formElements/DropdownInput.vue';
 import DateInput from '../formElements/DateInput.vue';
 /** Interface and modals */
 import IVehicleNL from '../../interfaces/IVehicleNL';
+import IFormSubmit from '../../interfaces/IFormSubmit';
 /** Constants */
 import mileageOptions from '../../constants/mileageOptions';
 /** API */
@@ -170,6 +171,14 @@ defineRule('birthDate', (value: string) => {
     DropdownInput,
     ErrorMessage,
   },
+  watch: {
+    yearBirth(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.setClaimFreeYearsOptions(newVal);
+        this.setSelectedClaimYear('0');
+      }
+    },
+  },
 })
 
 export default class CarForm extends Vue {
@@ -184,6 +193,7 @@ export default class CarForm extends Vue {
   mileage = mileageOptions.map((option) => option.value);
   selectedMileage: string = this.mileage[1];
 
+  yearBirth = 0;
   claimOptions: string[] = ['-5', '-4', '-3', '-2', '-1', '0'];
   selectedClaimYear: string = this.claimOptions[5];
 
@@ -195,19 +205,25 @@ export default class CarForm extends Vue {
     this.selectedClaimYear = option;
   }
 
-  setClaimFreeYearsOptions(value: string) : void {
+  updateYear(value: string) : void {
+    this.yearBirth = moment(value).year();
+  }
+
+  setClaimFreeYearsOptions(birthYear: number) : void {
+    const claims: string[] = ['-5', '-4', '-3', '-2', '-1', '0'];
     const currentYear = moment(new Date()).year();
-    const birthYear = moment(value).year();
     const maxValue = currentYear - birthYear - 18;
+
     if (maxValue > 0) {
       // Add options of claim year.
       for (let i = 1; i <= maxValue; i++) {
-        this.claimOptions.push(i.toString());
+        claims.push(i.toString());
       }
     }
+    this.claimOptions = [...claims];
   }
 
-  getYear(value: string) : string {
+  getOnlyYear(value: string) : string {
     return value.substring(0, 4);
   }
 
@@ -229,8 +245,12 @@ export default class CarForm extends Vue {
     }
   }
 
-  async onSubmitForm(formData: string[][]) : Promise<void> {
-    console.log(formData);
+  async onSubmitForm(formData: IFormSubmit) : Promise<void> {
+    // const newFomData = { ...formData };
+    // newFomData.birthDate = moment(newFomData.birthDate).format('YYYY-MM-DD');
+    // await sendDataAsQueryParamsUrl(newFomData);
+
+    formData.birthDate = moment(formData.birthDate).format('YYYY-MM-DD');
     await sendDataAsQueryParamsUrl(formData);
   }
 }
