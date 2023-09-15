@@ -102,6 +102,7 @@ export default class DateInput extends Vue implements IDatepicker {
 
   addNullBeforeNumber(number: number) : string|number {
     return number < 10 ? `0${number}` : number;
+    /** Another option is to use padStart */
     // return number < 10 ? number.toString().padStart(2, '0') : number;
   }
 }

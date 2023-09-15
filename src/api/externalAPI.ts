@@ -19,7 +19,7 @@ export async function sendDataAsQueryParamsUrl(formData: IFormSubmit): Promise<v
   try {
     const searchParams = new URLSearchParams(formDataJSON).toString();
     const response = await fetch(`api-url${searchParams}`);
-
+    // Result
     console.log(response.url);
   } catch (error) {
     console.log(error);
