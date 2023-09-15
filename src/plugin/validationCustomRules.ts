@@ -1,4 +1,4 @@
-import { defineRule, extend } from 'vee-validate';
+import { defineRule } from 'vee-validate';
 import { required, length, numeric } from '@vee-validate/rules';
 /** External library */
 import moment from 'moment';
@@ -53,10 +53,4 @@ defineRule('birthDate', (value: string) => {
     return 'Uw geboortedatum is niet geldig.';
   }
   return true;
-});
-
-// Setting Dutch error massage
-extend('required', {
-  ...required,
-  message: 'LOCALIZATION_PATH',
 });

@@ -12,7 +12,6 @@ describe('BaseInput component testing', () => {
     expect(baseInput.vm.replaceCharacters('')).toBe('');
   });
   test('Show text', () => {
-    // const title = 'Title test';
     const input = mount(BaseInput, {
       props: {
         fieldTitle: 'Title test',

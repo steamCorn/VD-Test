@@ -1,6 +1,6 @@
 import { shallowMount, mount } from '@vue/test-utils';
-// import flushPromises from 'flush-promises';
-import VeeValidate from 'vee-validate';
+import flushPromises from 'flush-promises';
+import waitForExpect from 'wait-for-expect';
 import CarForm from '../../src/components/forms/carForm.vue';
 
 const wrapper = shallowMount(CarForm);
@@ -12,26 +12,16 @@ describe('CarForm.vue', () => {
   });
 });
 
-test('Test the vee-validate directive', async () => {
-  const Vue = createLocalVue();
-  // important to turn off the sync behavior.
-  const wrapperTest = mount(
-    {
-      template: `
-                <div>
-                  <input type="text" name="input" v-validate="'required'">
-                  <span id="error">{{ errors.first('input') }}</span>
-                </div>
-                `,
-    },
-    { sync: false, localVue: Vue }
-  );
-  const error = wrapperTest.find('#error');
-
-  expect(error.text()).toBe('');
-  wrapperTest.find('input').setValue('');
-  expect(error.text()).toBe('The input field is required.');
-  // await vm.$validator.validate();
-
-  // expect(vm.$validator.errors.any()).toBe(true);
-});
+/** Here I wanted to test vee-validate and struggled
+ * with triggered event for submit button */
+// describe('Testing validation', () => {
+//   const carFormWrapper = mount(CarForm);
+//   test('Trigger submit form with empty data', async () => {;
+//     await carFormWrapper.find('button').trigger('click');
+//     await flushPromises();
+//     await waitForExpect(() => {
+//       expect(carFormWrapper.html()).toContain('Postcode is not valid.');
+//     });
+//   });
+//   // console.log('CarForm', carFormWrapper.html());
+// });

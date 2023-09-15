@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils';
 import SimpleCard from '../../src/components/forms/simpleCard.vue';
 
-describe('CarForm.vue', () => {
-  test('updateYear function', () => {
+describe('SimpleCard.vue', () => {
+  test('Generate content for slot', () => {
     const wrapper = mount(SimpleCard, {
       slots: {
         content: { template: '<div>Sidebar</div>' },

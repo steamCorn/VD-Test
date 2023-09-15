@@ -22,16 +22,6 @@
           class="input-field license-field"
         >
       </div>
-      <!-- Search button -->
-      <!-- <div class="search-button">
-        <img
-          src="../../assets/img/icons/ic_search.svg"
-          alt="Search black icon"
-          class="input-icon"
-          :class="{'opacity-icon' : valueField.length !== 6}"
-          @click="searchValue"
-        >
-      </div> -->
     </div>
     </Field>
     <ErrorMessage :name="fieldName" class="error-text"/>
@@ -105,31 +95,6 @@ export default class SearchInput extends Vue implements ISearchInput {
 
 .input-content {
   width: 100%;
-}
-
-.search-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 80px;
-  height: 40px;
-  background-color: rgb(115, 134, 197);
-  border-radius: 4px;
-  cursor: pointer
-}
-
-/* .search-button .input-icon {
-  position: absolute;
-  right: 16px;
-  top: 8px;
-} */
-
-.search-button:hover {
-  background-color: rgb(160, 173, 215);
-}
-
-.opacity-icon {
-  opacity: 0.5;
 }
 
 </style>

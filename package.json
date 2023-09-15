@@ -13,11 +13,13 @@
     "@vee-validate/yup": "^4.11.3",
     "@vuepic/vue-datepicker": "^6.1.0",
     "core-js": "^3.6.5",
+    "flush-promises": "^1.0.2",
     "moment": "^2.29.4",
     "vee-validate": "^4.11.3",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
-    "vue3-datepicker": "^0.4.0"
+    "vue3-datepicker": "^0.4.0",
+    "wait-for-expect": "^3.0.2"
   },
   "devDependencies": {
     "@types/jest": "^24.9.1",

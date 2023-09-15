@@ -13,4 +13,5 @@ module.exports = {
       },
     },
   },
+  setupFilesAfterEnv: ['./testSetupFile.ts'],
 };
