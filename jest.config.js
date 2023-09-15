@@ -3,4 +3,15 @@ module.exports = {
   transform: {
     '^.+\\.vue$': 'vue-jest',
   },
+  moduleNameMapper: {
+    '\\.(css)$': 'identity-obj-proxy',
+  },
+  globals: {
+    'ts-jest': {
+      diagnostics: {
+        ignoreCodes: ['2307', '2339'],
+      },
+    },
+  },
+  setupFilesAfterEnv: ['./testSetupFile.ts'],
 };
