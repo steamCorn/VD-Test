@@ -1,4 +1,4 @@
-export default interface IBaseInput {
+interface IBaseInput {
   fieldTitle: string;
   fieldName: string;
   type: string;
@@ -7,4 +7,6 @@ export default interface IBaseInput {
   maxlength: number | undefined;
   max: number | undefined;
   labelField: string | undefined;
-};
+}
+
+export default IBaseInput;

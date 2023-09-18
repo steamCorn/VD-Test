@@ -1,4 +1,4 @@
-export default interface IFormSubmit {
+interface IFormSubmit {
   license: string;
   zipCode: string;
   houseNumber: string;
@@ -6,4 +6,6 @@ export default interface IFormSubmit {
   mileage: string;
   claimYear: string;
   birthDate: string;
-};
+}
+
+export default IFormSubmit;

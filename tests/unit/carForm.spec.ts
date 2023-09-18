@@ -1,6 +1,6 @@
-import { shallowMount, mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
-import waitForExpect from 'wait-for-expect';
+import { shallowMount } from '@vue/test-utils';
+// import flushPromises from 'flush-promises';
+// import waitForExpect from 'wait-for-expect';
 import CarForm from '../../src/components/forms/carForm.vue';
 
 const wrapper = shallowMount(CarForm);

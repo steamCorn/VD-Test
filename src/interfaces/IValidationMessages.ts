@@ -1,5 +1,7 @@
-export default interface IValidationMessages {
+interface IValidationMessages {
   messages: {
     required: string;
   };
-};
+}
+
+export default IValidationMessages;

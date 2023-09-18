@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable camelcase */
 export default class AllVehicleData {
   aantal_cilinders: string;
