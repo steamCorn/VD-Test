@@ -11,7 +11,7 @@
         :min-date="minDate"
         :year-range="[minYear, maxYear]"
         It will block selecting not valid date -->
-      <VueDatePicker
+      <!-- <VueDatePicker
         v-model="selectedDate"
         placeholder="DD-MM-YYYY"
         :format="formatDateInput(selectedDate)"
@@ -22,7 +22,7 @@
         auto-apply
         @update:model-value="$emit('select-date', selectedDate)"
         input-class-name="input-field input-wrapper datepicker"
-      />
+      /> -->
     </Field>
     <ErrorMessage :name="fieldName" class="error-text"/>
   </div>
@@ -34,8 +34,8 @@ import { Options, Vue } from 'vue-class-component';
 /** Validation */
 import { Form, Field, ErrorMessage } from 'vee-validate';
 /** External library */
-import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css';
+// import VueDatePicker from '@vuepic/vue-datepicker';
+// import '@vuepic/vue-datepicker/dist/main.css';
 import moment from 'moment';
 /** Interface */
 import IDatepicker from '../../interfaces/IDatepicker';
@@ -45,7 +45,7 @@ import IDatepicker from '../../interfaces/IDatepicker';
     Form,
     Field,
     ErrorMessage,
-    VueDatePicker,
+    // VueDatePicker,
   },
   props: {
     fieldTitle: {
